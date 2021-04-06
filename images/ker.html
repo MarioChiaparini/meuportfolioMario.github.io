@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head >
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+	<!-- This site is optimized with the Yoast SEO plugin v16.0.2 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Autoencoders with Keras, TensorFlow, and Deep Learning - PyImageSearch</title>
+	<meta name="description" content="In this tutorial, you will learn how to implement and train autoencoders using Keras, TensorFlow, and Deep Learning." />
+	<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+	<link rel="canonical" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="Autoencoders with Keras, TensorFlow, and Deep Learning - PyImageSearch" />
+	<meta property="og:description" content="In this tutorial, you will learn how to implement and train autoencoders using Keras, TensorFlow, and Deep Learning." />
+	<meta property="og:url" content="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/" />
+	<meta property="og:site_name" content="PyImageSearch" />
+	<meta property="article:published_time" content="2020-02-17T15:00:46+00:00" />
+	<meta property="article:modified_time" content="2021-03-31T03:06:29+00:00" />
+	<meta property="og:image" content="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_header.png" />
+	<meta property="og:image:width" content="600" />
+	<meta property="og:image:height" content="400" />
+	<meta name="twitter:label1" content="Written by">
+	<meta name="twitter:data1" content="Adrian Rosebrock">
+	<meta name="twitter:label2" content="Est. reading time">
+	<meta name="twitter:data2" content="21 minutes">
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.pyimagesearch.com/#website","url":"https://www.pyimagesearch.com/","name":"PyImageSearch","description":"You can master Computer Vision, Deep Learning, and OpenCV - PyImageSearch","potentialAction":[{"@type":"SearchAction","target":"https://www.pyimagesearch.com/?s={search_term_string}","query-input":"required name=search_term_string"}],"inLanguage":"en-US"},{"@type":"ImageObject","@id":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#primaryimage","inLanguage":"en-US","url":"https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_header.png","width":600,"height":400},{"@type":"WebPage","@id":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#webpage","url":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/","name":"Autoencoders with Keras, TensorFlow, and Deep Learning - PyImageSearch","isPartOf":{"@id":"https://www.pyimagesearch.com/#website"},"primaryImageOfPage":{"@id":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#primaryimage"},"datePublished":"2020-02-17T15:00:46+00:00","dateModified":"2021-03-31T03:06:29+00:00","author":{"@id":"https://www.pyimagesearch.com/#/schema/person/5901b399e2f20b986362a00636181cca"},"description":"In this tutorial, you will learn how to implement and train autoencoders using Keras, TensorFlow, and Deep Learning.","breadcrumb":{"@id":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/"]}]},{"@type":"BreadcrumbList","@id":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"item":{"@type":"WebPage","@id":"https://www.pyimagesearch.com/","url":"https://www.pyimagesearch.com/","name":"Home"}},{"@type":"ListItem","position":2,"item":{"@type":"WebPage","@id":"https://www.pyimagesearch.com/blog/","url":"https://www.pyimagesearch.com/blog/","name":"Blog"}},{"@type":"ListItem","position":3,"item":{"@type":"WebPage","@id":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/","url":"https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/","name":"Autoencoders with Keras, TensorFlow, and Deep Learning"}}]},{"@type":"Person","@id":"https://www.pyimagesearch.com/#/schema/person/5901b399e2f20b986362a00636181cca","name":"Adrian Rosebrock","image":{"@type":"ImageObject","@id":"https://www.pyimagesearch.com/#personlogo","inLanguage":"en-US","url":"https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&d=mm&r=g","caption":"Adrian Rosebrock"},"description":"Hi there, I\u2019m Adrian Rosebrock, PhD. All too often I see developers, students, and researchers wasting their time, studying the wrong things, and generally struggling to get started with Computer Vision, Deep Learning, and OpenCV. I created this website to show you what I believe is the best possible way to get your start."}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel='dns-prefetch' href='//a.omappapi.com' />
+<link rel='dns-prefetch' href='//www.google.com' />
+<link rel='dns-prefetch' href='//use.typekit.net' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="PyImageSearch &raquo; Feed" href="https://www.pyimagesearch.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="PyImageSearch &raquo; Comments Feed" href="https://www.pyimagesearch.com/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="PyImageSearch &raquo; Autoencoders with Keras, TensorFlow, and Deep Learning Comments Feed" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/feed/" />
+<link rel="stylesheet" href="https://www.pyimagesearch.com/wp-content/cache/minify/41985.css" media="all" />
+
+
+
+
+
+
+
+
+
+<link rel='stylesheet' id='pyimagesearch-fonts-css'  href='https://use.typekit.net/aay3jsp.css?ver=5.6.2' type='text/css' media='all' />
+<link rel="stylesheet" href="https://www.pyimagesearch.com/wp-content/cache/minify/b9c43.css" media="all" />
+
+
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/5db65.js"></script>
+
+
+
+<link rel="https://api.w.org/" href="https://www.pyimagesearch.com/wp-json/" /><link rel="alternate" type="application/json" href="https://www.pyimagesearch.com/wp-json/wp/v2/posts/12691" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.pyimagesearch.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.pyimagesearch.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 5.6.2" />
+<link rel='shortlink' href='https://www.pyimagesearch.com/?p=12691' />
+<link rel="alternate" type="application/json+oembed" href="https://www.pyimagesearch.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.pyimagesearch.com%2F2020%2F02%2F17%2Fautoencoders-with-keras-tensorflow-and-deep-learning%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://www.pyimagesearch.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.pyimagesearch.com%2F2020%2F02%2F17%2Fautoencoders-with-keras-tensorflow-and-deep-learning%2F&#038;format=xml" />
+    <script type="text/javascript">
+        var ajaxurl = 'https://www.pyimagesearch.com/wp-admin/admin-ajax.php';
+    </script>
+<link rel="pingback" href="https://www.pyimagesearch.com/xmlrpc.php" />
+<style type="text/css">
+/* <![CDATA[ */
+img.latex { vertical-align: middle; border: none; }
+/* ]]> */
+</style>
+		<style type="text/css" id="wp-custom-css">
+			.grecaptcha-badge {
+    display: none !important;
+}
+
+img.latex {
+	margin: 0!important;
+	display: inline!important;
+}
+
+.entry-content > .aligncenter {
+	margin-left: auto;
+	margin-right: auto;
+} 
+
+.page-template-page_success_stories .success-story-all .success-story-item {
+	break-inside: avoid;
+	float: none;
+}		</style>
+		</head>
+<body class="post-template-default single single-post postid-12691 single-format-standard wp-embed-responsive header-full-width content-sidebar genesis-breadcrumbs-hidden genesis-footer-widgets-visible"><div class="site-container"><ul class="genesis-skip-link"><li><a href="#genesis-nav-primary" class="screen-reader-shortcut"> Skip to primary navigation</a></li><li><a href="#genesis-content" class="screen-reader-shortcut"> Skip to main content</a></li><li><a href="#genesis-sidebar-primary" class="screen-reader-shortcut"> Skip to primary sidebar</a></li><li><a href="#genesis-footer-widgets" class="screen-reader-shortcut"> Skip to footer</a></li></ul><header class="site-header"><div class="wrap"><div class="title-area"><p class="site-title"><a href="https://www.pyimagesearch.com/">PyImageSearch</a></p><p class="site-description">You can master Computer Vision, Deep Learning, and OpenCV - PyImageSearch</p></div><nav class="nav-secondary" aria-label="Secondary"><div class="wrap"><ul id="menu-header-secondary" class="menu genesis-nav-menu menu-secondary"><li id="menu-item-15978" class="menu-item"><a href="https://www.pyimagesearch.com/opencv-tutorials-resources-guides/"><span >OpenCV Install Guides</span></a></li>
+<li id="menu-item-12816" class="menu-item"><a href="https://www.pyimagesearch.com/about/"><span >About</span></a></li>
+<li id="menu-item-12817" class="menu-item"><a href="https://www.pyimagesearch.com/faqs/"><span >FAQ</span></a></li>
+<li id="menu-item-12818" class="menu-item"><a href="https://www.pyimagesearch.com/contact/"><span >Contact</span></a></li>
+</ul></div></nav><div class="main-nav-wrap"><nav class="nav-primary" aria-label="Main" id="genesis-nav-primary"><ul id="menu-main-menu" class="menu genesis-nav-menu menu-primary"><li id="menu-item-11459" class="menu-item"><a href="https://www.pyimagesearch.com/start-here/"><span >Get Started</span></a></li>
+<li id="menu-item-10696" class="is-topics menu-item menu-item-has-children"><a href="/topics/"><span >Topics</span></a><span class="submenu-expand" tabindex="-1"><svg class="svg-icon" width="16" height="16" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M151.5 347.8L3.5 201c-4.7-4.7-4.7-12.3 0-17l19.8-19.8c4.7-4.7 12.3-4.7 17 0L160 282.7l119.7-118.5c4.7-4.7 12.3-4.7 17 0l19.8 19.8c4.7 4.7 4.7 12.3 0 17l-148 146.8c-4.7 4.7-12.3 4.7-17 0z"/></svg></span>
+<ul class="sub-menu">
+	<li id="menu-item-10698" class="has-icon has-icon--deep-learning menu-item current-post-ancestor current-menu-parent current-post-parent"><a href="https://www.pyimagesearch.com/category/deep-learning/"><span >Deep Learning</span></a></li>
+	<li id="menu-item-10699" class="has-icon has-icon--dlib menu-item"><a href="https://www.pyimagesearch.com/category/dlib/"><span >Dlib Library</span></a></li>
+	<li id="menu-item-10700" class="has-icon has-icon--iot menu-item"><a href="https://www.pyimagesearch.com/category/embedded/"><span >Embedded/IoT and Computer Vision</span></a></li>
+	<li id="menu-item-10701" class="has-icon has-icon--face menu-item"><a href="https://www.pyimagesearch.com/category/faces/"><span >Face Applications</span></a></li>
+	<li id="menu-item-10702" class="has-icon has-icon--image menu-item"><a href="https://www.pyimagesearch.com/category/image-processing/"><span >Image Processing</span></a></li>
+	<li id="menu-item-10703" class="has-icon has-icon--interviews menu-item"><a href="https://www.pyimagesearch.com/category/interviews/"><span >Interviews</span></a></li>
+	<li id="menu-item-10704" class="has-icon has-icon--keras menu-item current-post-ancestor current-menu-parent current-post-parent"><a href="https://www.pyimagesearch.com/category/keras-and-tensorflow/"><span >Keras and TensorFlow</span></a></li>
+	<li id="menu-item-10705" class="has-icon has-icon--ml menu-item"><a href="https://www.pyimagesearch.com/category/machine-learning/"><span >Machine Learning and Computer Vision</span></a></li>
+	<li id="menu-item-10706" class="has-icon has-icon--medical menu-item"><a href="https://www.pyimagesearch.com/category/medical/"><span >Medical Computer Vision</span></a></li>
+	<li id="menu-item-10707" class="has-icon has-icon--ocr menu-item"><a href="https://www.pyimagesearch.com/category/optical-character-recognition-ocr/"><span >Optical Character Recognition (OCR)</span></a></li>
+	<li id="menu-item-10708" class="has-icon has-icon--object-detection menu-item"><a href="https://www.pyimagesearch.com/category/object-detection/"><span >Object Detection</span></a></li>
+	<li id="menu-item-10709" class="has-icon has-icon--object-tracking menu-item"><a href="https://www.pyimagesearch.com/category/object-tracking/"><span >Object Tracking</span></a></li>
+	<li id="menu-item-10711" class="has-icon has-icon--opencv menu-item"><a href="https://www.pyimagesearch.com/category/opencv/"><span >OpenCV Tutorials</span></a></li>
+	<li id="menu-item-10710" class="has-icon has-icon--pi menu-item"><a href="https://www.pyimagesearch.com/category/raspberry-pi/"><span >Raspberry Pi</span></a></li>
+</ul>
+</li>
+<li id="menu-item-12831" class="menu-item"><a href="https://www.pyimagesearch.com/books-and-courses/"><span >Books and Courses</span></a></li>
+<li id="menu-item-15979" class="menu-item"><a href="https://www.pyimagesearch.com/pyimagesearch-reviews-testimonials/"><span >Student Success Stories</span></a></li>
+<li id="menu-item-12845" class="menu-item current_page_parent"><a href="https://www.pyimagesearch.com/blog/"><span >Blog</span></a></li>
+<li id="menu-item-2619" class="mobile-only menu-item"><a href="https://www.pyimagesearch.com/about/"><span >About</span></a></li>
+<li id="menu-item-10258" class="mobile-only menu-item"><a href="https://www.pyimagesearch.com/faqs/"><span >FAQ</span></a></li>
+<li id="menu-item-6744" class="mobile-only menu-item"><a href="https://www.pyimagesearch.com/contact/"><span >Contact</span></a></li>
+</ul></nav><div class="header-search"><button class="mobile-search-toggle"><svg class="svg-icon search-icon" width="28" height="28" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z"/></svg><svg class="svg-icon search-close" width="28" height="28" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z"/></svg><span class="screen-reader-text">Search</span></button>
+<form role="search" method="get" class="search-form" action="https://www.pyimagesearch.com/">
+	<label>
+		<span class="screen-reader-text">Search...</span>
+		<input type="search" class="search-field" placeholder="Search articles..." value="" name="s" title="Search for" />
+	</label>
+	<button type="submit" class="search-submit"><svg class="svg-icon search" width="20" height="20" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z"/></svg><span class="screen-reader-text">Submit</span></button>
+</form>
+</div><nav class="nav-mobile"><button class="mobile-menu-toggle"><span class="mobile-menu-open"><svg class="svg-icon menu-open" width="13" height="13" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"/></svg>Menu</span><span class="mobile-menu-close"><svg class="svg-icon menu-close" width="13" height="13" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M207.6 256l107.72-107.72c6.23-6.23 6.23-16.34 0-22.58l-25.03-25.03c-6.23-6.23-16.34-6.23-22.58 0L160 208.4 52.28 100.68c-6.23-6.23-16.34-6.23-22.58 0L4.68 125.7c-6.23 6.23-6.23 16.34 0 22.58L112.4 256 4.68 363.72c-6.23 6.23-6.23 16.34 0 22.58l25.03 25.03c6.23 6.23 16.34 6.23 22.58 0L160 303.6l107.72 107.72c6.23 6.23 16.34 6.23 22.58 0l25.03-25.03c6.23-6.23 6.23-16.34 0-22.58L207.6 256z"/></svg>Close</span><span class="screen-reader-text">Menu</span></button></nav></div></div></header><div class="pyi-page-hero"><div class="wrap"><p class="entry-meta"><span class="entry-categories"><a href="https://www.pyimagesearch.com/category/deep-learning/" rel="category tag">Deep Learning</a> <a href="https://www.pyimagesearch.com/category/keras-and-tensorflow/" rel="category tag">Keras and TensorFlow</a> <a href="https://www.pyimagesearch.com/category/tutorials/" rel="category tag">Tutorials</a></span></p><header class="entry-header"><h1 class="entry-title">Autoencoders with Keras, TensorFlow, and Deep Learning</h1>
+</header><p class="entry-meta">by <span class="entry-author"><a href="https://www.pyimagesearch.com/author/adrian/" class="entry-author-link" rel="author"><span class="entry-author-name">Adrian Rosebrock</span></a></span> on <time class="entry-time">February 17, 2020</time></p><div class="pyi-hero-left"></div><div class="pyi-hero-right"></div></div></div><div class="site-inner"><div class="wrap"><div class="content-sidebar-wrap"><main class="content" id="genesis-content"><article class="post-12691 post type-post status-publish format-standard has-post-thumbnail category-deep-learning category-keras-and-tensorflow category-tutorials tag-autoencoders tag-convolutional-neural-network tag-deep-learning tag-keras tag-neural-nets entry"><div class="entry-content">
+<div class="single-post-sticky-spacer">
+	<div id="source-code-mini-wrap" class="gpd-source-code-mini single-post-top-cta" style="">
+   		<div class="gpd-source-code-mini-content">
+			<a href="#download-the-code" id="pyis-optinmonster-open-modal">
+			Click here to download the source code to this post			</a>
+    	</div>
+	</div>
+</div>
+<script src="https://fast.wistia.com/embed/medias/r5chgvsnyb.jsonp" async></script><script src="https://fast.wistia.com/assets/external/E-v1.js" async></script><div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><div class="wistia_embed wistia_async_r5chgvsnyb videoFoam=true" style="height:100%;position:relative;width:100%"><div class="wistia_swatch" style="height:100%;left:0;opacity:0;overflow:hidden;position:absolute;top:0;transition:opacity 200ms;width:100%;"><img src="https://fast.wistia.com/embed/medias/r5chgvsnyb/swatch" style="filter:blur(5px);height:100%;object-fit:contain;width:100%;" alt="" aria-hidden="true" onload="this.parentNode.style.opacity=1;" /></div></div></div></div>
+
+
+
+<p>In this tutorial, you will learn how to implement and train autoencoders using Keras, TensorFlow, and Deep Learning.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter"><a href="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_header.png"><img loading="lazy" width="600" height="400" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_header.png" alt="" class="wp-image-13308" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_header.png 600w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_header-300x200.png 300w" sizes="(max-width: 600px) 100vw, 600px" /></a></figure></div>
+
+
+
+<p>Today&#8217;s tutorial kicks off a three-part series on the applications of autoencoders:</p>
+
+
+
+<ol><li><em>Autoencoders with Keras, TensorFlow, and Deep Learning</em> (today&#8217;s tutorial)</li><li><em>Denoising autoenecoders with Keras and TensorFlow</em> (next week&#8217;s tutorial)</li><li><em>Anomaly detection with Keras, TensorFlow, and Deep Learning</em> (tutorial two weeks from now)</li></ol>
+
+
+
+<p>A few weeks ago, I published an <a href="https://www.pyimagesearch.com/2020/01/20/intro-to-anomaly-detection-with-opencv-computer-vision-and-scikit-learn/" target="_blank" rel="noopener noreferrer">introductory guide to anomaly/outlier detection</a> using <em>standard</em> machine learning algorithms.</p>
+
+
+
+<p>My intention was to <em>immediately</em> follow up that post with a a guide on <em>deep learning-based</em> anomaly detection; however, as I started writing the code for the tutorial, <em>I realized I had never covered autoencoders on the PyImageSearch blog!</em></p>
+
+
+
+<p>Trying to discuss deep learning-based anomaly detection without prior context on <em>what</em> autoencoders are and <em>how</em> they work would be challenging to follow, comprehend, and digest.</p>
+
+
+
+<p>Therefore, we&#8217;re going to spend the next couple of weeks looking at autoencoder algorithms, including their practical, real-world applications.</p>
+
+
+
+<p><strong>To learn about the fundamentals of autoencoders using Keras and TensorFlow, <em>just keep reading!</em></strong></p>
+
+
+<div id="pyi-source-code-block" class="source-code-wrap"><div class="gpd-source-code">
+    <div class="gpd-source-code-content">
+        <img src="//www.pyimagesearch.com/wp-content/uploads/2020/01/source-code-icon.png" alt="">
+        <h4>Looking for the source code to this post?</h4>
+                    <a href="#download-the-code">Jump Right To The Downloads Section <svg class="svg-icon arrow-right" width="12" height="12" aria-hidden="true" role="img" focusable="false" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.8125 0.1875C6.875 0.125 6.96875 0.09375 7.09375 0.09375C7.1875 0.09375 7.28125 0.125 7.34375 0.1875L13.875 6.75C13.9375 6.8125 14 6.90625 14 7C14 7.125 13.9375 7.1875 13.875 7.25L7.34375 13.8125C7.28125 13.875 7.1875 13.9062 7.09375 13.9062C6.96875 13.9062 6.875 13.875 6.8125 13.8125L6.1875 13.1875C6.125 13.125 6.09375 13.0625 6.09375 12.9375C6.09375 12.8438 6.125 12.75 6.1875 12.6562L11.0312 7.8125H0.375C0.25 7.8125 0.15625 7.78125 0.09375 7.71875C0.03125 7.65625 0 7.5625 0 7.4375V6.5625C0 6.46875 0.03125 6.375 0.09375 6.3125C0.15625 6.25 0.25 6.1875 0.375 6.1875H11.0312L6.1875 1.34375C6.125 1.28125 6.09375 1.1875 6.09375 1.0625C6.09375 0.96875 6.125 0.875 6.1875 0.8125L6.8125 0.1875Z" fill="#169FE6"></path></svg></a>
+            </div>
+</div>
+</div>
+
+
+
+<h2>Autoencoders with Keras, TensorFlow, and Deep Learning</h2>
+
+
+
+<p>In the first part of this tutorial, we&#8217;ll discuss what <strong>autoencoders</strong> are, including how <strong>convolutional autoencoders</strong> can be applied to image data. We&#8217;ll also discuss the <em>difference</em> between autoencoders and other generative models, such as <strong>Generative Adversarial Networks (GANs).</strong></p>
+
+
+
+<p>From there, I&#8217;ll show you how to implement and train a convolutional autoencoder using Keras and TensorFlow.</p>
+
+
+
+<p>We&#8217;ll then review the results of the training script, including visualizing how the autoencoder did at reconstructing the input data.</p>
+
+
+
+<p>Finally, I&#8217;ll recommend next steps to you if you are interested in learning more about deep learning applied to image datasets.</p>
+
+
+
+<h3>What are autoencoders?</h3>
+
+
+
+<p>Autoencoders are a type of <strong>unsupervised neural network</strong> (i.e., no class labels or labeled data) that seek to:</p>
+
+
+
+<ol><li>Accept an input set of data (i.e., the <em>input</em>).</li><li>Internally <em>compress</em> the input data into a <strong>latent-space representation</strong> (i.e., a single vector that <em>compresses</em> and <em>quantifies</em> the input).</li><li><strong>Reconstruct the input data</strong> from this latent representation (i.e., the output).</li></ol>
+
+
+
+<p>Typically, we think of an autoencoder having two components/subnetworks:</p>
+
+
+
+<ol><li><strong>Encoder:</strong> Accepts the input data and compresses it into the latent-space. If we denote our input data as <img src='https://www.pyimagesearch.com/wp-content/latex/9dd/9dd4e461268c8034f5c8564e155c67a6-ffffff-000000-0.png' alt='x' title='x' class='latex' /> and the encoder as <img src='https://www.pyimagesearch.com/wp-content/latex/3a3/3a3ea00cfc35332cedf6e5e9a32e94da-ffffff-000000-0.png' alt='E' title='E' class='latex' />, then the output latent-space representation, <img src='https://www.pyimagesearch.com/wp-content/latex/03c/03c7c0ace395d80182db07ae2c30f034-ffffff-000000-0.png' alt='s' title='s' class='latex' />, would be <img src='https://www.pyimagesearch.com/wp-content/latex/20a/20a313e27b032b6649d6aa6ba83fd495-ffffff-000000-0.png' alt='s = E(x)' title='s = E(x)' class='latex' />.</li><li><strong>Decoder:</strong> The decoder is responsible for accepting the latent-space representation <img src='https://www.pyimagesearch.com/wp-content/latex/03c/03c7c0ace395d80182db07ae2c30f034-ffffff-000000-0.png' alt='s' title='s' class='latex' /> and then reconstructing the original input. If we denote the decoder function as <img src='https://www.pyimagesearch.com/wp-content/latex/f62/f623e75af30e62bbd73d6df5b50bb7b5-ffffff-000000-0.png' alt='D' title='D' class='latex' /> and the output of the detector as <img src='https://www.pyimagesearch.com/wp-content/latex/d95/d95679752134a2d9eb61dbd7b91c4bcc-ffffff-000000-0.png' alt='o' title='o' class='latex' />, then we can represent the decoder as <img src='https://www.pyimagesearch.com/wp-content/latex/e57/e57e948c26c67145ea05a001fa7d4f91-ffffff-000000-0.png' alt='o = D(s)' title='o = D(s)' class='latex' />.</li></ol>
+
+
+
+<p>Using our mathematical notation, the entire training process of the autoencoder can be written as:</p>
+
+
+<img src='https://www.pyimagesearch.com/wp-content/latex/d8a/d8a08c115a772e6adc12ad0956ee6604-ffffff-000000-0.png' alt='o = D(E(x))' title='o = D(E(x))' class='latex' />
+
+
+
+<p><strong>Figure 1</strong> below demonstrates the basic architecture of an autoencoder:</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter"><a href="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_arch_flow.png"><img loading="lazy" width="600" height="250" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_arch_flow.png" alt="" class="wp-image-13314" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_arch_flow.png 600w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_arch_flow-300x125.png 300w" sizes="(max-width: 600px) 100vw, 600px" /></a><figcaption><strong>Figure 1:</strong> Autoencoders with Keras, TensorFlow, Python, and Deep Learning don&#8217;t have to be complex. Breaking the concept down to its parts, you&#8217;ll have an input image that is passed through the autoencoder which results in a similar output image. (figure inspired by Nathan Hubens&#8217; article, <a href="https://towardsdatascience.com/deep-inside-autoencoders-7e41f319999f" target="_blank" rel="noopener noreferrer"><em>Deep inside: Autoencoders</em></a>)</figcaption></figure></div>
+
+
+
+<p>Here you can see that:</p>
+
+
+
+<ol><li>We input a digit to the autoencoder.</li><li>The encoder subnetwork creates a latent representation of the digit. This latent representation is <strong><em>substantially smaller</em></strong> (in terms of dimensionality) than the input.</li><li>The decoder subnetwork then reconstructs the original digit from the latent representation.</li></ol>
+
+
+
+<p><strong>You can thus think of an autoencoder as a network that <em>reconstructs its input!</em></strong></p>
+
+
+
+<p>To train an autoencoder, we input our data, attempt to reconstruct it, and then minimize the mean squared error (or similar loss function).</p>
+
+
+
+<p><strong>Ideally, the output of the autoencoder will be <em>near identical</em> to the input.</strong></p>
+
+
+
+<h3>An autoencoder reconstructs it&#8217;s input &#8212; <em>so what&#8217;s the big deal?</em></h3>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter"><a href="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_whats_the_point.png"><img loading="lazy" width="600" height="316" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_whats_the_point.png" alt="" class="wp-image-13316" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_whats_the_point.png 600w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_whats_the_point-300x158.png 300w" sizes="(max-width: 600px) 100vw, 600px" /></a><figcaption><strong>Figure 2:</strong> Autoencoders are useful for compression, dimensionality reduction, denoising, and anomaly/outlier detection. In this tutorial, we&#8217;ll use Python and Keras/TensorFlow to train a deep learning autoencoder. (<a href="https://lilianweng.github.io/lil-log/2018/08/12/from-autoencoder-to-beta-vae.html" target="_blank" rel="noopener noreferrer">image source</a>)</figcaption></figure></div>
+
+
+
+<p>At this point, some of you might be thinking:</p>
+
+
+
+<blockquote class="wp-block-quote"><p>Adrian, what&#8217;s the big deal here?</p><p>If the goal of an autoencoder is just to <em>reconstruct</em> the input, why even use the network in the first place?</p><p>If I wanted a <em>copy</em> of my input data, I could literally just copy it with a single function call.</p><p>Why on earth would I apply deep learning and go through the trouble of training a network?</p></blockquote>
+
+
+
+<p>This question, although a legitimate one, does indeed contain a large misconception regarding autoencoders.</p>
+
+
+
+<p>Yes, during the training process, our goal is to train a network that can learn how to reconstruct our input data &#8212; <strong>but the true value of the autoencoder lives inside that latent-space representation.</strong></p>
+
+
+
+<p>Keep in mind that autoencoders <em>compress</em> our input data and, more to the point, when we train autoencoders, what we <em>really</em> care about is the encoder, <img src='https://www.pyimagesearch.com/wp-content/latex/3a3/3a3ea00cfc35332cedf6e5e9a32e94da-ffffff-000000-0.png' alt='E' title='E' class='latex' />, and the latent-space representation, <img src='https://www.pyimagesearch.com/wp-content/latex/20a/20a313e27b032b6649d6aa6ba83fd495-ffffff-000000-0.png' alt='s = E(x)' title='s = E(x)' class='latex' /><em>.</em></p>
+
+
+
+<p>The decoder, <img src='https://www.pyimagesearch.com/wp-content/latex/e57/e57e948c26c67145ea05a001fa7d4f91-ffffff-000000-0.png' alt='o = D(s)' title='o = D(s)' class='latex' />, is used to train the autoencoder end-to-end, but in practical applications, we often (but not always) care more about the encoder and the latent-space.</p>
+
+
+
+<p>Later in this tutorial, we&#8217;ll be training an autoencoder on the MNIST dataset. The MNIST dataset consists of digits that are <em>28&#215;28</em> pixels with a single channel, implying that each digit is represented by <em>28 x 28 = 784</em> values. <strong>The autoencoder we&#8217;ll be training here will be able to compress those digits into a vector of only <em>16 values</em> &#8212; that&#8217;s a reduction of <em>nearly 98%!</em></strong></p>
+
+
+
+<p>So what can we do if an input data point is compressed into such a small vector?</p>
+
+
+
+<p>That&#8217;s where things get really interesting.</p>
+
+
+
+<h3>What are applications of autoencoders?</h3>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter"><a href="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_applications.png"><img loading="lazy" width="600" height="233" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_applications.png" alt="" class="wp-image-13317" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_applications.png 600w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoders_applications-300x117.png 300w" sizes="(max-width: 600px) 100vw, 600px" /></a><figcaption><strong>Figure 3:</strong> Autoencoders are typically used for dimensionality reduction, denoising, and anomaly/outlier detection. Outside of computer vision, they are extremely useful for Natural Language Processing (NLP) and text comprehension. In this tutorial, we&#8217;ll use Python and Keras/TensorFlow to train a deep learning autoencoder. (<a href="https://towardsdatascience.com/deep-autoencoders-using-tensorflow-c68f075fd1a3" target="_blank" rel="noopener noreferrer">image source</a>)</figcaption></figure></div>
+
+
+
+<p>Autoencoders are typically used for:</p>
+
+
+
+<ul><li><strong>Dimensionality reduction</strong> (i.e., think PCA but more powerful/intelligent).</li><li><strong>Denoising</strong> (ex., removing noise and preprocessing images to improve OCR accuracy).</li><li><strong>Anomaly/outlier detection</strong> (ex., detecting mislabeled data points in a dataset or detecting when an input data point falls well outside our typical data distribution).</li></ul>
+
+
+
+<p>Outside of the computer vision field, you&#8217;ll see autoencoders applied to Natural Language Processing (NLP) and text comprehension problems, including understanding the semantic meaning of words, constructing word embeddings, and even text summarization.</p>
+
+
+
+<h3>How are autoencoders different from GANs?</h3>
+
+
+
+<p>If you&#8217;ve done any prior work with Generative Adversarial Networks (GANs), you might be wondering how autoencoders are different from GANs.</p>
+
+
+
+<p>Both GANs and autoencoders are <strong>generative models</strong>; however, an autoencoder is essentially learning an <em>identity function</em> via <em>compression.</em></p>
+
+
+
+<p>The autoencoder will accept our input data, compress it down to the latent-space representation, and then attempt to reconstruct the input using just the latent-space vector.</p>
+
+
+
+<p>Typically, the latent-space representation will have <strong><em>much fewer dimensions</em></strong> than the original input data.</p>
+
+
+
+<p><strong>GANs on the other hand:</strong></p>
+
+
+
+<ol><li>Accept a low dimensional input.</li><li>Build a high dimensional space from it.</li><li>Generate the final output, which is <em>not</em> part of the original training data but ideally <em>passes</em> as such.</li></ol>
+
+
+
+<p>Furthermore, GANs have an <strong><em>evolving loss landscape,</em></strong> which autoencoders do not.</p>
+
+
+
+<p>As a GAN is trained, the <strong>generative model</strong> generates &#8220;fake&#8221; images that are then mixed with actual &#8220;real&#8221; images &#8212; the <strong>discriminator model</strong> must then determine which images are &#8220;real&#8221; vs. &#8220;fake/generated&#8221;.</p>
+
+
+
+<p>As the generative model becomes better and better at generating fake images that can fool the discriminator, the loss landscape evolves and changes (this is one of the reasons why training GANs is so damn hard).</p>
+
+
+
+<p>While both GANs and autoencoders are generative models, most of their similarities end there.</p>
+
+
+
+<p>Autoencoders cannot generate new, realistic data points that could be considered &#8220;passable&#8221; by humans. Instead, autoencoders are primarily used as a method to compress input data points into a latent-space representation. That latent-space representation can then be used for compression, denoising, anomaly detection, etc.</p>
+
+
+
+<p>For more details on the differences between GANs and autoencoders, <a href="https://www.quora.com/What-is-the-difference-between-Generative-Adversarial-Networks-and-Autoencoders" target="_blank" rel="noopener noreferrer">I suggest giving this thread on Quora a read</a>.</p>
+
+
+
+<h3>Configuring your development environment</h3>
+
+
+
+<p>To follow along with today&#8217;s tutorial on autoencoders, you should use TensorFlow 2.0. I have two installation tutorials for TF 2.0 and associated packages to bring your development system up to speed:</p>
+
+
+
+<ul><li><em><a href="https://www.pyimagesearch.com/2019/12/09/how-to-install-tensorflow-2-0-on-ubuntu/" target="_blank" rel="noopener noreferrer">How to install TensorFlow 2.0 on Ubuntu</a></em> (Ubuntu 18.04 OS; CPU and optional NVIDIA GPU)</li><li><em><a href="https://www.pyimagesearch.com/2019/12/09/how-to-install-tensorflow-2-0-on-macos/" target="_blank" rel="noopener noreferrer">How to install TensorFlow 2.0 on macOS</a></em> (Catalina and Mojave OSes)</li></ul>
+
+
+
+<p><strong>Please note:</strong> PyImageSearch does not support Windows &#8212; <a href="https://www.pyimagesearch.com/faqs/single-faq/can-you-help-me-do-___-on-windows" target="_blank" rel="noopener noreferrer">refer to our FAQ</a>.</p>
+
+
+
+<h3>Project structure</h3>
+
+
+
+<p>Be sure to grab the <strong><em>&#8220;Downloads&#8221;</em></strong> associated with the blog post. From there, extract the .zip and inspect the file/folder layout:</p>
+
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="shell" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="212">$ tree --dirsfirst
+.
+├── pyimagesearch
+│   ├── __init__.py
+│   └── convautoencoder.py
+├── output.png
+├── plot.png
+└── train_conv_autoencoder.py
+
+1 directory, 5 files</pre>
+
+
+<p>We will review two Python scripts today:</p>
+<ul>
+<li><code class="EnlighterJSRAW" data-enlighter-language="shell">convautoencoder.py</code>: Contains the <code class="EnlighterJSRAW" data-enlighter-language="python">ConvAutoencoder</code> class and <code class="EnlighterJSRAW" data-enlighter-language="python">build</code> method required to assemble our neural network with <code class="EnlighterJSRAW" data-enlighter-language="python">tf.keras</code>.</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="shell">train_conv_autoencoder.py</code>: Trains a digits autoencoder on the MNIST dataset. Once the autoencoder is trained, we&#8217;ll loop over a number of output examples and write them to disk for later inspection.</li>
+</ul>
+<p>Our training script results in both a <code class="EnlighterJSRAW" data-enlighter-language="shell">plot.png</code> figure and <code class="EnlighterJSRAW" data-enlighter-language="shell">output.png</code> image. The output image contains side-by-side samples of the original versus reconstructed image.</p>
+<p>In the next section, we will implement our autoencoder with the high-level Keras API built into TensorFlow.</p>
+<h3>Implementing a convolutional autoencoder with Keras and TensorFlow</h3>
+<p>Before we can train an autoencoder, we first need to implement the autoencoder architecture itself.</p>
+<p><strong>To do so, we&#8217;ll be using Keras and TensorFlow.</strong></p>
+<p>My implementation loosely <a href="https://blog.keras.io/building-autoencoders-in-keras.html" target="_blank" rel="noopener noreferrer">follows Francois Chollet&#8217;s own implementation of autoencoders</a> on the official Keras blog. My primary contribution here is to go into a bit more detail regarding the implementation itself.</p>
+<p>Open up the <code class="EnlighterJSRAW" data-enlighter-language="shell">convautoencoder.py</code> file in your project structure, and insert the following code:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="213"># import the necessary packages
+from tensorflow.keras.layers import BatchNormalization
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Conv2DTranspose
+from tensorflow.keras.layers import LeakyReLU
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Reshape
+from tensorflow.keras.layers import Input
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+import numpy as np
+
+class ConvAutoencoder:
+	@staticmethod
+	def build(width, height, depth, filters=(32, 64), latentDim=16):
+		# initialize the input shape to be "channels last" along with
+		# the channels dimension itself
+		# channels dimension itself
+		inputShape = (height, width, depth)
+		chanDim = -1</pre>
+
+
+<p>We begin with a selection of imports from <code class="EnlighterJSRAW" data-enlighter-language="python">tf.keras</code> and one from NumPy. If you don&#8217;t have TensorFlow 2.0 installed on your system, refer to the <em>&#8220;Configuring your development environment&#8221;</em> section above.</p>
+<p>Our <code class="EnlighterJSRAW" data-enlighter-language="python">ConvAutoencoder</code> class contains one static method, <code class="EnlighterJSRAW" data-enlighter-language="python">build</code>, which accepts five parameters:</p>
+<ul>
+<li><code class="EnlighterJSRAW" data-enlighter-language="python">width</code>: Width of the input image in pixels.</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="python">height</code>: Height of the input image in pixels.</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="python">depth</code>: Number of channels (i.e., depth) of the input volume.</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="python">filters</code>: A tuple that contains the set of filters for convolution operations. By default, this parameter includes both <code class="EnlighterJSRAW" data-enlighter-language="python">32</code> and <code class="EnlighterJSRAW" data-enlighter-language="python">64</code> filters.</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="python">latentDim</code>: The number of neurons in our fully-connected (<code class="EnlighterJSRAW" data-enlighter-language="python">Dense</code>) latent vector. By default, if this parameter is not passed, the value is set to <code class="EnlighterJSRAW" data-enlighter-language="python">16</code>.</li>
+</ul>
+<p>From there, we initialize the <code class="EnlighterJSRAW" data-enlighter-language="python">inputShape</code> and channel dimension (we assume &#8220;channels last&#8221; ordering).</p>
+<p>We&#8217;re now ready to initialize our input and begin adding layers to our network:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="24" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="236">		# define the input to the encoder
+		inputs = Input(shape=inputShape)
+		x = inputs
+
+		# loop over the number of filters
+		for f in filters:
+			# apply a CONV => RELU => BN operation
+			x = Conv2D(f, (3, 3), strides=2, padding="same")(x)
+			x = LeakyReLU(alpha=0.2)(x)
+			x = BatchNormalization(axis=chanDim)(x)
+
+		# flatten the network and then construct our latent vector
+		volumeSize = K.int_shape(x)
+		x = Flatten()(x)
+		latent = Dense(latentDim)(x)
+
+		# build the encoder model
+		encoder = Model(inputs, latent, name="encoder")</pre>
+
+
+<p><strong>Lines 25 and 26</strong> define the input to the encoder.</p>
+<p>With our inputs ready, we go loop over the number of <code class="EnlighterJSRAW" data-enlighter-language="python">filters</code> and add our sets of <code class="EnlighterJSRAW" data-enlighter-language="python">CONV=&gt;LeakyReLU=&gt;BN</code> layers (<strong>Lines 29-33</strong>).</p>
+<p>Next, we flatten the network and construct our latent vector (<strong>Lines 36-38</strong>) &#8212; <strong>this is our actual latent-space representation (i.e., the &#8220;compressed&#8221; data representation).</strong></p>
+<p>We then build our <code class="EnlighterJSRAW" data-enlighter-language="python">encoder</code> model (<strong>Line 41</strong>).</p>
+<p>If we were to do a <code class="EnlighterJSRAW" data-enlighter-language="python">print(encoder.summary())</code> of the <code class="EnlighterJSRAW" data-enlighter-language="python">encoder</code>, assuming <em>28&#215;28</em> single channel images (<code class="EnlighterJSRAW" data-enlighter-language="python">depth=1</code>) and <code class="EnlighterJSRAW" data-enlighter-language="python">filters=(32, 64)</code> and <code class="EnlighterJSRAW" data-enlighter-language="python">latentDim=16</code>, we would have the following:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="shell" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="214">Model: "encoder"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+input_1 (InputLayer)         [(None, 28, 28, 1)]       0
+_________________________________________________________________
+conv2d (Conv2D)              (None, 14, 14, 32)        320
+_________________________________________________________________
+leaky_re_lu (LeakyReLU)      (None, 14, 14, 32)        0
+_________________________________________________________________
+batch_normalization (BatchNo (None, 14, 14, 32)        128
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 7, 7, 64)          18496
+_________________________________________________________________
+leaky_re_lu_1 (LeakyReLU)    (None, 7, 7, 64)          0
+_________________________________________________________________
+batch_normalization_1 (Batch (None, 7, 7, 64)          256
+_________________________________________________________________
+flatten (Flatten)            (None, 3136)              0
+_________________________________________________________________
+dense (Dense)                (None, 16)                50192
+=================================================================
+Total params: 69,392
+Trainable params: 69,200
+Non-trainable params: 192
+_________________________________________________________________</pre>
+
+
+<p>Here we can observe that:</p>
+<ul>
+<li>Our encoder begins by accepting a <em>28x28x1</em> input volume.</li>
+<li>We then apply two rounds of <code class="EnlighterJSRAW" data-enlighter-language="python">CONV=&gt;RELU=&gt;BN</code><span style="font-size: inherit;">, each with </span><em style="font-size: inherit;">3&#215;3</em><span style="font-size: inherit;"> strided convolution. The strided convolution allows us to reduce the spatial dimensions of our volumes.</span></li>
+<li>After applying our final batch normalization, we end up with a <em style="font-size: inherit;">7x7x64</em><span style="font-size: inherit;"> volume, which is flattened into a </span><em style="font-size: inherit;">3136</em><span style="font-size: inherit;">-dim vector.</span></li>
+<li>Our fully-connected layer (i.e., the <code class="EnlighterJSRAW" data-enlighter-language="python">Dense</code><span style="font-size: inherit;"> layer) serves our as our </span><strong style="font-size: inherit;">latent-space representation.</strong></li>
+</ul>
+<p>Next, let&#8217;s learn how the decoder model can take this latent-space representation and reconstruct the original input image:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="43" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="288">		# start building the decoder model which will accept the
+		# output of the encoder as its inputs
+		latentInputs = Input(shape=(latentDim,))
+		x = Dense(np.prod(volumeSize[1:]))(latentInputs)
+		x = Reshape((volumeSize[1], volumeSize[2], volumeSize[3]))(x)
+
+		# loop over our number of filters again, but this time in
+		# reverse order
+		for f in filters[::-1]:
+			# apply a CONV_TRANSPOSE => RELU => BN operation
+			x = Conv2DTranspose(f, (3, 3), strides=2,
+				padding="same")(x)
+			x = LeakyReLU(alpha=0.2)(x)
+			x = BatchNormalization(axis=chanDim)(x)</pre>
+
+
+<p>To start building the decoder model, we:</p>
+<ul>
+<li>Construct the input to the decoder model based on the <code class="EnlighterJSRAW" data-enlighter-language="python">latentDim</code>. (<strong>Lines 45 and 46</strong>).</li>
+<li>Accept the 1D <code class="EnlighterJSRAW" data-enlighter-language="python">latentDim</code><span style="font-size: inherit;"> vector and turn it into a 2D volume so that we can start applying convolution (</span><strong style="font-size: inherit;">Line 47</strong><span style="font-size: inherit;">).</span></li>
+<li>Loop over the number of filters, this time in reverse order while applying a <code class="EnlighterJSRAW" data-enlighter-language="python">CONV_TRANSPOSE =&gt; RELU =&gt; BN</code><span style="font-size: inherit;"> operation (</span><strong style="font-size: inherit;">Lines 51-56</strong><span style="font-size: inherit;">).</span></li>
+</ul>
+<p>Transposed convolution is used to increase the <em>spatial dimensions</em> (i.e., width and height) of the volume.</p>
+<p>Let&#8217;s finish creating our autoencoder:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="58" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="301">		# apply a single CONV_TRANSPOSE layer used to recover the
+		# original depth of the image
+		x = Conv2DTranspose(depth, (3, 3), padding="same")(x)
+		outputs = Activation("sigmoid")(x)
+
+		# build the decoder model
+		decoder = Model(latentInputs, outputs, name="decoder")
+
+		# our autoencoder is the encoder + decoder
+		autoencoder = Model(inputs, decoder(encoder(inputs)),
+			name="autoencoder")
+
+		# return a 3-tuple of the encoder, decoder, and autoencoder
+		return (encoder, decoder, autoencoder)</pre>
+
+
+<p>Wrapping up, we:</p>
+<ul>
+<li>Apply a final <code class="EnlighterJSRAW" data-enlighter-language="python">CONV_TRANSPOSE</code> layer used to recover the original channel depth of the image (1 channel for single channel/grayscale images or 3 channels for RGB images) on <strong>Line 60</strong>.</li>
+<li>Apply a sigmoid activation function (<strong style="font-size: inherit;">Line 61</strong><span style="font-size: inherit;">).</span></li>
+<li>Build the <code class="EnlighterJSRAW" data-enlighter-language="python">decoder</code><span style="font-size: inherit;"> model, and add it with the </span><code class="EnlighterJSRAW" data-enlighter-language="python">encoder</code><span style="font-size: inherit;"> to the </span><code class="EnlighterJSRAW" data-enlighter-language="python">autoencoder</code><span style="font-size: inherit;"> (</span><strong style="font-size: inherit;">Lines 64-68</strong><span style="font-size: inherit;">). </span><strong style="font-size: inherit;">The autoencoder becomes the encoder + decoder.</strong></li>
+<li>Return a 3-tuple of the encoder, decoder, and autoencoder.</li>
+</ul>
+<p>If we were to complete a <code class="EnlighterJSRAW" data-enlighter-language="python">print(decoder.summary())</code> operation here, we would have the following:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="shell" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="215">Model: "decoder"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+input_2 (InputLayer)         [(None, 16)]              0
+_________________________________________________________________
+dense_1 (Dense)              (None, 3136)              53312
+_________________________________________________________________
+reshape (Reshape)            (None, 7, 7, 64)          0
+_________________________________________________________________
+conv2d_transpose (Conv2DTran (None, 14, 14, 64)        36928
+_________________________________________________________________
+leaky_re_lu_2 (LeakyReLU)    (None, 14, 14, 64)        0
+_________________________________________________________________
+batch_normalization_2 (Batch (None, 14, 14, 64)        256
+_________________________________________________________________
+conv2d_transpose_1 (Conv2DTr (None, 28, 28, 32)        18464
+_________________________________________________________________
+leaky_re_lu_3 (LeakyReLU)    (None, 28, 28, 32)        0
+_________________________________________________________________
+batch_normalization_3 (Batch (None, 28, 28, 32)        128
+_________________________________________________________________
+conv2d_transpose_2 (Conv2DTr (None, 28, 28, 1)         289
+_________________________________________________________________
+activation (Activation)      (None, 28, 28, 1)         0
+=================================================================
+Total params: 109,377
+Trainable params: 109,185
+Non-trainable params: 192
+_________________________________________________________________</pre>
+
+
+<p>The <code class="EnlighterJSRAW" data-enlighter-language="python">decoder</code> accepts our 16-dim latent representation from the <code class="EnlighterJSRAW" data-enlighter-language="python">encoder</code> and then builds a <em>new</em> fully-connected layer of 3136-dim, which is the product of <em>7 x 7 x 64 = 3136.</em></p>
+<p>Using our new 3136-dim FC layer, we reshape it into a 3D volume of <em>7 x 7 x 64.</em> From there we can start applying our <code class="EnlighterJSRAW" data-enlighter-language="python">CONV_TRANSPOSE=&gt;RELU=&gt;BN</code> operation. Unlike standard strided convolution, which is used to <em>decrease</em> volume size, our transposed convolution is used to <em>increase</em> volume size.</p>
+<p>Finally, a transposed convolution layer is applied to recover the <strong>original channel depth</strong> of the image. Since our images are grayscale, we learn a <em>single filter</em>, the output of which is a <em>28 x 28 x 1 </em>volume (i.e., the dimensions of the original MNIST digit images).</p>
+<p>A <code class="EnlighterJSRAW" data-enlighter-language="python">print(autoencoder.summary())</code> operation shows the composed nature of the encoder and decoder:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="shell" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="217">Model: "autoencoder"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #
+=================================================================
+input_1 (InputLayer)         [(None, 28, 28, 1)]       0
+_________________________________________________________________
+encoder (Model)              (None, 16)                69392
+_________________________________________________________________
+decoder (Model)              (None, 28, 28, 1)         109377
+=================================================================
+Total params: 178,769
+Trainable params: 178,385
+Non-trainable params: 384
+_________________________________________________________________</pre>
+
+
+<p>The input to our <code class="EnlighterJSRAW" data-enlighter-language="python">encoder</code> is the <strong>original</strong> <em>28 x 28 x 1</em> images from the MNIST dataset. Our <code class="EnlighterJSRAW" data-enlighter-language="python">encoder</code> then learns a 16-dim latent-space representation of the data, after which the <code class="EnlighterJSRAW" data-enlighter-language="python">decoder</code> <strong>reconstructs</strong> the original <em>28 x 28 x 1</em> images.</p>
+<p>In the next section, we will develop our script to train our autoencoder.</p>
+<h3>Creating the convolutional autoencoder training script</h3>
+<p>With our autoencoder architecture implemented, let&#8217;s move on to the training script.</p>
+<p>Open up the <code class="EnlighterJSRAW" data-enlighter-language="shell">train_conv_autoencoder.py</code> in your project directory structure, and insert the following code:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="382"># set the matplotlib backend so figures can be saved in the background
+import matplotlib
+matplotlib.use("Agg")
+
+# import the necessary packages
+from pyimagesearch.convautoencoder import ConvAutoencoder
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.datasets import mnist
+import matplotlib.pyplot as plt
+import numpy as np
+import argparse
+import cv2
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-s", "--samples", type=int, default=8,
+	help="# number of samples to visualize when decoding")
+ap.add_argument("-o", "--output", type=str, default="output.png",
+	help="path to output visualization file")
+ap.add_argument("-p", "--plot", type=str, default="plot.png",
+	help="path to output plot file")
+args = vars(ap.parse_args())</pre>
+
+
+<p>On <strong>Lines 2-12,</strong> we handle our imports. We&#8217;ll use the <code class="EnlighterJSRAW" data-enlighter-language="python">"Agg"</code> backend of <code class="EnlighterJSRAW" data-enlighter-language="python">matplotlib</code> so that we can export our training plot to disk.</p>
+<p>We need our custom <code class="EnlighterJSRAW" data-enlighter-language="python">ConvAutoencoder</code> architecture class which we implemented in the previous section.</p>
+<p>We will use the <code class="EnlighterJSRAW" data-enlighter-language="python">Adam</code> optimizer as we train on the MNIST benchmarking dataset. For visualization, we&#8217;ll employ OpenCV.</p>
+<p>Next, we&#8217;ll parse three <a href="https://www.pyimagesearch.com/2018/03/12/python-argparse-command-line-arguments/" target="_blank" rel="noopener noreferrer">command line arguments</a>, all of which are optional:</p>
+<ul>
+<li><code class="EnlighterJSRAW" data-enlighter-language="python">--samples</code>: The number of output samples for visualization. By default this value is set to <code class="EnlighterJSRAW" data-enlighter-language="python">8</code>.</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="shell">--output</code>: The path the output visualization image. We&#8217;ll name our visualization output.png by default</li>
+<li><code class="EnlighterJSRAW" data-enlighter-language="shell">--plot</code>: The path to our matplotlib output plot. A default of plot.png is assigned if this argument is not provided in the terminal.</li>
+</ul>
+<p>Now we&#8217;ll set a couple hyperparameters and preprocess our MNIST dataset:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="24" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="399"># initialize the number of epochs to train for and batch size
+EPOCHS = 25
+BS = 32
+
+# load the MNIST dataset
+print("[INFO] loading MNIST dataset...")
+((trainX, _), (testX, _)) = mnist.load_data()
+
+# add a channel dimension to every image in the dataset, then scale
+# the pixel intensities to the range [0, 1]
+trainX = np.expand_dims(trainX, axis=-1)
+testX = np.expand_dims(testX, axis=-1)
+trainX = trainX.astype("float32") / 255.0
+testX = testX.astype("float32") / 255.0</pre>
+
+
+<p><strong>Lines 25 and 26</strong> initialize the batch size and number of training epochs.</p>
+<p>From there, we&#8217;ll work with our MNIST dataset. TensorFlow/Keras has a handy <code class="EnlighterJSRAW" data-enlighter-language="python">load_data</code> method that we can call on <code class="EnlighterJSRAW" data-enlighter-language="python">mnist</code> to grab the data (<strong>Line 30</strong>). From there, <strong>Lines 34-37</strong> (1) add a channel dimension to every image in the dataset and (2) scale the pixel intensities to the range  <em>[0, 1]</em>.</p>
+<p>We&#8217;re now ready to <strong>build and train our autoencoder:</strong></p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="39" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="410"># construct our convolutional autoencoder
+print("[INFO] building autoencoder...")
+(encoder, decoder, autoencoder) = ConvAutoencoder.build(28, 28, 1)
+opt = Adam(lr=1e-3)
+autoencoder.compile(loss="mse", optimizer=opt)
+
+# train the convolutional autoencoder
+H = autoencoder.fit(
+	trainX, trainX,
+	validation_data=(testX, testX),
+	epochs=EPOCHS,
+	batch_size=BS)</pre>
+
+
+<p>To build the convolutional autoencoder, we call the <code class="EnlighterJSRAW" data-enlighter-language="python">build</code> method on our <code class="EnlighterJSRAW" data-enlighter-language="python">ConvAutoencoder</code> class and pass the necessary arguments (<strong>Line 41</strong>). Recall that this results in the <code class="EnlighterJSRAW" data-enlighter-language="python">(encoder, decoder, autoencoder)</code> tuple &#8212; going forward in this script, we only need the <code class="EnlighterJSRAW" data-enlighter-language="python">autoencoder</code> for training and predictions.</p>
+<p>We initialize our <code class="EnlighterJSRAW" data-enlighter-language="python">Adam</code> optimizer with an initial learning rate of <code class="EnlighterJSRAW" data-enlighter-language="python">1e-3</code> and go ahead and compile it with mean-squared error loss (<strong>Lines 42 and 43</strong>).</p>
+<p>From there, we <code class="EnlighterJSRAW" data-enlighter-language="python">fit</code> (train) our <code class="EnlighterJSRAW" data-enlighter-language="python">autoencoder</code> on the MNIST data (<strong>Lines 46-50</strong>).</p>
+<p>Let&#8217;s go ahead and plot our training history:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="52" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="423"># construct a plot that plots and saves the training history
+N = np.arange(0, EPOCHS)
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(N, H.history["loss"], label="train_loss")
+plt.plot(N, H.history["val_loss"], label="val_loss")
+plt.title("Training Loss and Accuracy")
+plt.xlabel("Epoch #")
+plt.ylabel("Loss/Accuracy")
+plt.legend(loc="lower left")
+plt.savefig(args["plot"])</pre>
+
+
+<p>And from there, we&#8217;ll make predictions on our testing set:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="python" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="64" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="430"># use the convolutional autoencoder to make predictions on the
+# testing images, then initialize our list of output images
+print("[INFO] making predictions...")
+decoded = autoencoder.predict(testX)
+outputs = None
+
+# loop over our number of output samples
+for i in range(0, args["samples"]):
+	# grab the original image and reconstructed image
+	original = (testX[i] * 255).astype("uint8")
+	recon = (decoded[i] * 255).astype("uint8")
+
+	# stack the original and reconstructed image side-by-side
+	output = np.hstack([original, recon])
+
+	# if the outputs array is empty, initialize it as the current
+	# side-by-side image display
+	if outputs is None:
+		outputs = output
+
+	# otherwise, vertically stack the outputs
+	else:
+		outputs = np.vstack([outputs, output])
+
+# save the outputs image to disk
+cv2.imwrite(args["output"], outputs)</pre>
+
+
+<p><strong>Line 67</strong> makes predictions on the test set. We then loop over the number of <code class="EnlighterJSRAW" data-enlighter-language="python">--samples</code> passed as a command line argument (<strong>Line 71</strong>) so that we can build our visualization. Inside the loop, we:</p>
+<ul>
+<li>Grab <em>both</em> the original and reconstructed images (<strong>Lines 73 and 74</strong>).</li>
+<li>Stack the pair of images <em style="font-size: inherit;">side-by-side</em><span style="font-size: inherit;"> (</span><strong style="font-size: inherit;">Line 77</strong><span style="font-size: inherit;">).</span></li>
+<li>Stack the pairs <em style="font-size: inherit;">vertically</em><span style="font-size: inherit;"> (</span><strong style="font-size: inherit;">Lines 81-86</strong><span style="font-size: inherit;">).</span></li>
+<li>Finally, we output the visualization image to disk (<strong style="font-size: inherit;">Line 89</strong><span style="font-size: inherit;">).</span></li>
+</ul>
+<p>In the next section, we&#8217;ll see the results of our hard work.</p>
+<h3>Training the convolutional autoencoder with Keras and TensorFlow</h3>
+<p>We are now ready to see our autoencoder in action!</p>
+<p>Make sure you use the <strong><em>&#8220;Downloads&#8221;</em></strong> section of this post to download the source code &#8212; from there you can execute the following command:</p>
+
+
+<pre class="EnlighterJSRAW" data-enlighter-language="shell" data-enlighter-theme="" data-enlighter-highlight="" data-enlighter-linenumbers="true" data-enlighter-lineoffset="1" data-enlighter-title="Autoencoders with Keras, TensorFlow, and Deep Learning" data-enlighter-group="453">$ python train_conv_autoencoder.py
+[INFO] loading MNIST dataset...
+[INFO] building autoencoder...
+Train on 60000 samples, validate on 10000 samples
+Epoch 1/25
+60000/60000 [==============================] - 68s 1ms/sample - loss: 0.0188 - val_loss: 0.0108
+Epoch 2/25
+60000/60000 [==============================] - 68s 1ms/sample - loss: 0.0104 - val_loss: 0.0096
+Epoch 3/25
+60000/60000 [==============================] - 68s 1ms/sample - loss: 0.0094 - val_loss: 0.0086
+Epoch 4/25
+60000/60000 [==============================] - 68s 1ms/sample - loss: 0.0088 - val_loss: 0.0086
+Epoch 5/25
+60000/60000 [==============================] - 68s 1ms/sample - loss: 0.0084 - val_loss: 0.0080
+...
+Epoch 20/25
+60000/60000 [==============================] - 83s 1ms/sample - loss: 0.0067 - val_loss: 0.0069
+Epoch 21/25
+60000/60000 [==============================] - 83s 1ms/sample - loss: 0.0066 - val_loss: 0.0069
+Epoch 22/25
+60000/60000 [==============================] - 83s 1ms/sample - loss: 0.0066 - val_loss: 0.0068
+Epoch 23/25
+60000/60000 [==============================] - 83s 1ms/sample - loss: 0.0066 - val_loss: 0.0068
+Epoch 24/25
+60000/60000 [==============================] - 83s 1ms/sample - loss: 0.0065 - val_loss: 0.0067
+Epoch 25/25
+60000/60000 [==============================] - 83s 1ms/sample - loss: 0.0065 - val_loss: 0.0068
+[INFO] making predictions...</pre>
+
+
+<figure id="attachment_13318" aria-describedby="caption-attachment-13318" style="width: 600px" class="wp-caption aligncenter"><a href="https://www.pyimagesearch.com/wp-content/uploads/2020/02/plot.png"><img loading="lazy" class="wp-image-13318" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/plot.png" alt="" width="600" height="450" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/plot.png 640w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/plot-300x225.png 300w" sizes="(max-width: 600px) 100vw, 600px" /></a><figcaption id="caption-attachment-13318" class="wp-caption-text"><strong>Figure 4:</strong> Our deep learning autoencoder training history plot was generated with matplotlib. Our autoencoder was trained with Keras, TensorFlow, and Deep Learning.</figcaption></figure>
+<p>As <strong>Figure 4</strong> and the terminal output demonstrate, our training process was able to minimize the reconstruction loss of the autoencoder.</p>
+<p><strong>But how well did the autoencoder do at reconstructing the training data?</strong></p>
+<p>The answer is <strong><em>very good:</em></strong></p>
+<figure id="attachment_13319" aria-describedby="caption-attachment-13319" style="width: 327px" class="wp-caption aligncenter"><a href="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_output.png"><img loading="lazy" class="wp-image-13319" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_output.png" alt="" width="327" height="425" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_output.png 400w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/keras_autoencoder_output-231x300.png 231w" sizes="(max-width: 327px) 100vw, 327px" /></a><figcaption id="caption-attachment-13319" class="wp-caption-text"><strong>Figure 5:</strong> A sample of of Keras/TensorFlow deep learning autoencoder inputs <em>(left)</em> and outputs <em>(right)</em>.</figcaption></figure>
+<p>In <strong>Figure 5</strong>, on the <em>left</em> is our original image while the <em>right</em> is the reconstructed digit predicted by the autoencoder. <strong>As you can see, the digits are <em>nearly indistinguishable</em> from each other!</strong></p>
+<p>At this point, you may be thinking:</p>
+<blockquote>
+<p>Great &#8230; so I can train a network to reconstruct my original image.</p>
+<p>But you said that what <em>really matters</em> is the internal latent-space representation.</p>
+<p>How can I access that representation, and how can I use it for denoising and anomaly/outlier detection?</p>
+</blockquote>
+<p>Those are great questions &#8212; <strong>I&#8217;ll be addressing both in my next two tutorials here on PyImageSearch, so stay tuned!</strong></p>
+<h3>What&#8217;s next?</h3>
+<figure id="attachment_6954" aria-describedby="caption-attachment-6954" style="width: 600px" class="wp-caption aligncenter"><a href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" target="_blank" rel="noopener noreferrer"><img loading="lazy" class="wp-image-6954 size-full" src="https://www.pyimagesearch.com/wp-content/uploads/2018/01/dl4cv_trusted_by_cover.png" alt="" width="600" height="658" srcset="https://www.pyimagesearch.com/wp-content/uploads/2018/01/dl4cv_trusted_by_cover.png 600w, https://www.pyimagesearch.com/wp-content/uploads/2018/01/dl4cv_trusted_by_cover-274x300.png 274w" sizes="(max-width: 600px) 100vw, 600px" /></a><figcaption id="caption-attachment-6954" class="wp-caption-text"><strong>Figure 6:</strong> My <a href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" target="_blank" rel="noopener noreferrer">deep learning book</a> is perfect for beginners and experts alike. Whether you&#8217;re just getting started, working on research in graduate school, or applying advanced techniques to solve complex problems in industry, this book is tailor made for you.</figcaption></figure>
+<p>This tutorial and the next two in this series admittedly discuss <em>advanced applications</em> of computer vision and deep learning.</p>
+<p>If you don&#8217;t already know the <em>fundamentals</em> of deep learning, now would be a good time to learn them. To get a head start, I personally suggest you read my book, <em><a href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" target="_blank" rel="noopener noreferrer"><strong>Deep Learning for Computer Vision with Python</strong></a>.</em></p>
+<p>Inside the book, you will learn:</p>
+<ul>
+<li><strong>Deep learning fundamentals and theory without unnecessary mathematical fluff.</strong> I present the basic equations and back them up with code walkthroughs that you can implement and easily understand. You don’t need a degree in advanced mathematics to understand this book.</li>
+<li><strong style="font-size: inherit;">How to implement your own custom neural network architectures.</strong><span style="font-size: inherit;"> Not only will you learn how to implement state-of-the-art architectures, including ResNet, SqueezeNet, etc., but you&#8217;ll </span><em style="font-size: inherit;">also</em><span style="font-size: inherit;"> learn how to create your own custom CNNs.</span></li>
+<li><strong style="font-size: inherit;">How to train CNNs on your own datasets.</strong><span style="font-size: inherit;"> Most deep learning tutorials don&#8217;t teach you how to work with your own custom datasets. Mine do. You&#8217;ll be training CNNs on your own datasets in no time.</span></li>
+<li><strong style="font-size: inherit;">Object detection (Faster R-CNNs, Single Shot Detectors, and RetinaNet) and instance segmentation (Mask R-CNN).</strong><span style="font-size: inherit;"> Use these chapters to create your own custom object detectors and segmentation networks.</span></li>
+</ul>
+<p><strong>If you&#8217;re interested in learning more about the book, I&#8217;d be happy to send you a <em>free</em> PDF containing the Table of Contents and a few sample chapters. Simply click the button below:</strong></p>
+<div style="margin-bottom: 15px;"><center><a style="color: #ffffff; text-decoration: none; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 16px; line-height: 20px; padding: 10px; display: inline-block; max-width: 300px; border-radius: 5px; text-shadow: rgba(0, 0, 0, 0.247059) 0px -1px 1px; box-shadow: rgba(255, 255, 255, 0.498039) 0px 1px 3px inset, rgba(0, 0, 0, 0.498039) 0px 1px 3px; background: #4d9e3a;" href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book" target="_blank" rel="noopener noreferrer">Grab my <em>free</em> sample chapters!</a></center></div>
+<h2>Summary</h2>
+<p>In this tutorial, you learned the fundamentals of autoencoders.</p>
+<p>Autoencoders are generative models that consist of an <em>encoder</em> and a <em>decoder</em> model. When trained, the encoder takes input data point and learns a latent-space representation of the data. This latent-space representation is a <em>compressed</em> representation of the data, allowing the model to represent it in <em>far fewer</em> parameters than the original data.</p>
+<p>The decoder model then takes the latent-space representation and attempts to reconstruct the original data point from it. When trained end-to-end, the encoder and decoder function in a composed manner.</p>
+<p>In practice, we use autoencoders for dimensionality reduction, compression, denoising, and anomaly detection.</p>
+<p>After we understood the fundamentals, we implemented a convolutional autoencoder using Keras and TensorFlow.</p>
+<p>In next week&#8217;s tutorial, we&#8217;ll learn how to use a convolutional autoencoder for denoising.</p>
+<p><strong>To download the source code to this post (and be notified when future tutorials are published here on PyImageSearch), <em>just enter your email address in the form below!</em></strong></p>
+<div id="download-the-code" class="post-cta-wrap">
+<div class="gpd-post-cta">
+	<div class="gpd-post-cta-content">
+		
+
+			<div class="gpd-post-cta-top">
+				<div class="gpd-post-cta-top-image"><img src="https://www.pyimagesearch.com/wp-content/uploads/2020/01/cta-source-guide-1.png" alt="" /></div>
+				
+				<div class="gpd-post-cta-top-title"><h4>Download the Source Code and FREE 17-page Resource Guide</h4></div>
+				<div class="gpd-post-cta-top-desc"><p>Enter your email address below to get a .zip of the code and a <strong>FREE 17-page Resource Guide on Computer Vision, OpenCV, and Deep Learning.</strong> Inside you'll find my hand-picked tutorials, books, courses, and libraries to help you master CV and DL!</p></div>
+
+
+			</div>
+
+			<div class="gpd-post-cta-bottom">
+				<form id="footer-cta-code" class="footer-cta" action="https://www.getdrip.com/forms/946939703/submissions" method="post" target="blank" data-drip-embedded-form="946939703">
+					<input name="fields[email]" type="email" value="" placeholder="Your email address" class="form-control" />
+
+					<button type="submit">Download the code!</button>
+
+					<div style="display: none;" aria-hidden="true"><label for="website">Website</label><br /><input type="text" id="website" name="website" tabindex="-1" autocomplete="false" value="" /></div>
+				</form>
+			</div>
+
+
+		
+	</div>
+
+</div>
+</div><!-- RightMessage WP -->
+<script type="text/javascript">
+		window.rmpanda = window.rmpanda || {};
+	window.rmpanda.cmsdata = {"cms":"wordpress","postId":12691,"taxonomyTerms":{"category":[165,445,27],"post_tag":[571,112,109,359,111],"post_format":[]}};
+	</script><!--<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+			xmlns:dc="http://purl.org/dc/elements/1.1/"
+			xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+		<rdf:Description rdf:about="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/"
+    dc:identifier="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/"
+    dc:title="Autoencoders with Keras, TensorFlow, and Deep Learning"
+    trackback:ping="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/trackback/" />
+</rdf:RDF>-->
+</div></article><section class="author-box"><img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=240&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=480&#038;d=mm&#038;r=g 2x' class='avatar avatar-240 photo' height='240' width='240' loading='lazy'/><h4 class="author-box-title"><strong>About the Author</strong></h4><div class="author-box-content" itemprop="description"><p>Hi there, I’m Adrian Rosebrock, PhD. All too often I see developers, students, and researchers wasting their time, studying the wrong things, and generally struggling to get started with Computer Vision, Deep Learning, and OpenCV. I created this website to show you what I believe is the best possible way to get your start.</p>
+</div></section><h2 class="screen-reader-text">Reader Interactions</h2><div class="single-post-nav"><a href="https://www.pyimagesearch.com/2020/02/10/opencv-dnn-with-nvidia-gpus-1549-faster-yolo-ssd-and-mask-r-cnn/"><div class="single-post-nav__previous"><p>Previous Article:</p><h3>OpenCV &#8216;dnn&#8217; with NVIDIA GPUs: 1549% faster YOLO, SSD, and Mask R-CNN</h3></div></a><a href="https://www.pyimagesearch.com/2020/02/24/denoising-autoencoders-with-keras-tensorflow-and-deep-learning/"><div class="single-post-nav__next"><p>Next Article:</p><h3>Denoising autoencoders with Keras, TensorFlow, and Deep Learning</h3></div></a></div><div class="entry-comments" id="comments"><h3>20 responses to: Autoencoders with Keras, TensorFlow, and Deep Learning</h3><ol class="comment-list">
+	<li class="comment even thread-even depth-1" id="comment-736702">
+	<article id="article-comment-736702">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/0d490f68dd91ba5f7647acef92ad02d9?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0d490f68dd91ba5f7647acef92ad02d9?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Shyamala</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-736702">February 17, 2020 at 7:00 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Hi sir ..I am a research scholar ..I need a guidance for doing text textt mining on deep learning using medical text..</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-2" id="comment-739318">
+	<article id="article-comment-739318">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-739318">February 18, 2020 at 1:57 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>What do you mean by &#8220;medical text&#8221;?</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+
+	<li class="comment even depth-2" id="comment-758924">
+	<article id="article-comment-758924">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/230c4128e27db87b5bea8eb1cc1436a4?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/230c4128e27db87b5bea8eb1cc1436a4?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name"><a href="http://www.gbsystem.fr" class="comment-author-link" rel="external nofollow">Gilles BONNET</a></span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-758924">February 24, 2020 at 4:34 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Catched your point : Medical doctors have awfull handwriting and only few can read them but medical world.. Sure a deep learning based system would be helpfull to &#8220;decode&#8221; their writings&#8230; but this is not the purpose of this article..<br />
+BTW : very helpfull and well explained article.. Congratulations Adrian</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-3" id="comment-759293">
+	<article id="article-comment-759293">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-759293">February 27, 2020 at 9:03 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Thanks Gilles!</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li class="comment even thread-odd thread-alt depth-1" id="comment-739813">
+	<article id="article-comment-739813">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/4ba10298c0cd8ab1ed3170749aeb08a3?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/4ba10298c0cd8ab1ed3170749aeb08a3?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Akib</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-739813">February 18, 2020 at 3:59 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Which is performing better nowadays in Anomaly Detection?<br />
+Does machine learning approach outperform deep learning approach from your experienc?</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-2" id="comment-746883">
+	<article id="article-comment-746883">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-746883">February 20, 2020 at 9:14 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>It&#8217;s really dependent on the project itself and how you define the &#8220;anomaly&#8221;. I&#8217;ll be going into more detail in the anomaly detection post so stay tuned!</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li class="comment even thread-even depth-1" id="comment-759022">
+	<article id="article-comment-759022">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/be861cd4f38f5a7d1d1092d1ba430a41?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/be861cd4f38f5a7d1d1092d1ba430a41?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">panneer selvam</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-759022">February 25, 2020 at 12:53 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>I have tensorflow 1.12.0 installed for my GPU. Please tell me whether your code of encoders will work in 1.12.0 version. Also I am using keras 2.2.4</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-2" id="comment-759292">
+	<article id="article-comment-759292">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-759292">February 27, 2020 at 9:03 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>This code was developed using TensorFlow 2.0. The code should still work but I have not tested with TensorFlow 1.12.</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li class="comment even thread-odd thread-alt depth-1" id="comment-759129">
+	<article id="article-comment-759129">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/e336a85a4dac63b1c62ecea274469690?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/e336a85a4dac63b1c62ecea274469690?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Alex Retana</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-759129">February 25, 2020 at 4:13 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>On lines 34-35, you extended the dimensions of the training and test data numpy array.</p>
+<p>What purpose does this serve? I don&#8217;t quite see why it was done or where it becomes important for the future. Do you have any clarifications for this?</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment odd alt depth-2" id="comment-759132">
+	<article id="article-comment-759132">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/e336a85a4dac63b1c62ecea274469690?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/e336a85a4dac63b1c62ecea274469690?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Alex Retana</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-759132">February 25, 2020 at 4:16 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>I just thought about it more:</p>
+<p>Is this done because the MNIST Dataset comes in a single channel?</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor even depth-3" id="comment-759291">
+	<article id="article-comment-759291">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-759291">February 27, 2020 at 9:02 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Correct, we need to explicitly add the channel dimension.</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li class="comment odd alt thread-even depth-1" id="comment-766722">
+	<article id="article-comment-766722">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/0e258bfd3dde005dc38eb337e69566e2?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0e258bfd3dde005dc38eb337e69566e2?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Han</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-766722">March 18, 2020 at 12:18 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Thanks. Great post and well explained.<br />
+I have a question, I am using MobileNet (pre-trained from Keras), I want to apply autoencoders to it to enhance the result of the network (I want to build a small visual search).<br />
+But (from my understanding) Conv autoencoders are CNN itself, so, how can this be done?  </p>
+<p>Thanks again, and I appreciate your reply.</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+
+	<li class="comment even thread-odd thread-alt depth-1" id="comment-767136">
+	<article id="article-comment-767136">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/495642ba43e372cea0973e024a891919?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/495642ba43e372cea0973e024a891919?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name"><a href="https://kernelultras.org/" class="comment-author-link" rel="external nofollow">Mario</a></span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-767136">March 21, 2020 at 9:08 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>What is the difference between this model (encoder, decoder, autoencoder) and the sequential model? Does it have any advantages?</p>
+<p>Thanks</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+
+	<li class="comment odd alt thread-even depth-1" id="comment-770110">
+	<article id="article-comment-770110">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/8e82695c89c32014dc9d6b0b90e2d4c9?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/8e82695c89c32014dc9d6b0b90e2d4c9?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Luke Seed</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-770110">April 3, 2020 at 12:47 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Hi Adrian,</p>
+<p>I went through this tutorial and had no problems with your code building (as I would expect), training, and reproducing the correct output.</p>
+<p>I adapted the code for my image set (which has non-standard dimensions 74&#215;385 and is color; so 74x385x3) which turned out to be quite the pain.  Apparently the padding features of Conv2D don&#8217;t work very well and the final output shapes don&#8217;t  match the input shapes.  I eventually resized to 72x384x3 which seemed to allow me to train.</p>
+<p>My problem is that when I go to see the output.png (final step) all I am getting is black output.  Do you think the problem is that my autoencoder couldn&#8217;t train from the dataset or is there a code issue (from switching the resolution and to color rather than the greyscale MNIST)?<br />
+Thank you.</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+
+	<li class="comment even thread-odd thread-alt depth-1" id="comment-770289">
+	<article id="article-comment-770289">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/271d3dc371812053e985fe1e8c86b196?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/271d3dc371812053e985fe1e8c86b196?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">haha</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-770289">April 4, 2020 at 10:12 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>I&#8217;m very appreciate about your wonderful post.<br />
+Just curious about the sequence between LeakyReLU and BN.<br />
+What is the difference between placing the BN layer before or after the activation function?</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-2" id="comment-772422">
+	<article id="article-comment-772422">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-772422">April 9, 2020 at 8:43 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>It depends on your architecture. I don&#8217;t like placing the activation before the BN as that squashes any activations less than 0. That doesn&#8217;t make sense prior to applying a BN layer. I discuss that in more detail inside <a target="blank" href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" rel="noopener noreferrer">Deep Learning for Computer Vision with Python.</a></p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li class="comment even thread-even depth-1" id="comment-774094">
+	<article id="article-comment-774094">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/e1546a3fdeefe9883839871b94b8cd5e?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/e1546a3fdeefe9883839871b94b8cd5e?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Mubashir</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-774094">April 10, 2020 at 7:14 am</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Hi! Adrian thanks for your highly relevant tutorials. Would be grateful if you could kindly share a tutorial about using autoencoders for processing numeric data like those generated through batches from sensors. Definitely for such data, Convolutional Autoencoders might not be useful!</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-2" id="comment-784009">
+	<article id="article-comment-784009">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-784009">April 15, 2020 at 1:06 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Thanks Mubashir, I&#8217;m glad you enjoyed the blog post; however, PyImageSearch is a computer vision blog and I don&#8217;t typically cover non-CV tasks so it&#8217;s pretty unlikely I&#8217;ll cover a numeric data example.</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+
+	<li class="comment even thread-odd thread-alt depth-1" id="comment-777027">
+	<article id="article-comment-777027">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/0a72dad60abf8fe145e7ef3e5d5df37f?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/0a72dad60abf8fe145e7ef3e5d5df37f?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Walid</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-777027">April 11, 2020 at 6:19 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>Great article</p>
+<p>I think you meant:  encoder.summary()  and not print(encoder.summary())</p>
+		</div>
+
+		
+		
+	</article>
+	<ul class="children">
+
+	<li class="comment byuser comment-author-adrian bypostauthor odd alt depth-2" id="comment-784013">
+	<article id="article-comment-784013">
+
+		
+		<header class="comment-header">
+			<p class="comment-author">
+				<img alt='' src='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=48&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/02743529311d3b8babbaf6935670ec9c?s=96&#038;d=mm&#038;r=g 2x' class='avatar avatar-48 photo' height='48' width='48' loading='lazy'/><span class="comment-author-name">Adrian Rosebrock</span>			</p>
+
+			<p class="comment-meta"><time class="comment-time"><a class="comment-time-link" href="https://www.pyimagesearch.com/2020/02/17/autoencoders-with-keras-tensorflow-and-deep-learning/#comment-784013">April 15, 2020 at 1:08 pm</a></time></p>		</header>
+
+		<div class="comment-content">
+			
+			<p>The &#8220;print&#8221; is required if you are executing it via the command line which this tutorial assumes you are doing.</p>
+		</div>
+
+		
+		
+	</article>
+	</li><!-- #comment-## -->
+</ul><!-- .children -->
+</li><!-- #comment-## -->
+</ol></div><div class="comment-policy">  <h3 class="comment-policy__title">Comment section</h3>  <div class="comment-policy__content"><p>Hey, Adrian Rosebrock here, author and creator of PyImageSearch. While I love hearing from readers, a couple years ago I made the tough decision to no longer offer 1:1 help over blog post comments.</p>
+<p>At the time I was receiving 200+ emails per day and another 100+ blog post comments. I simply did not have the time to moderate and respond to them all, and the shear volume of requests was taking a toll on me.</p>
+<p>Instead, my goal is to <em>do the most good</em> for the computer vision, deep learning, and OpenCV community at large by focusing my time on authoring high-quality blog posts, tutorials, and books/courses.</p>
+<p><strong>If you need help learning computer vision and deep learning, <a href="https://www.pyimagesearch.com/books-and-courses/" target="_blank" rel="noopener">I suggest you refer to my full catalog of books and courses</a></strong> — they have helped tens of thousands of developers, students, and researchers <em>just like yourself</em> learn Computer Vision, Deep Learning, and OpenCV.</p>
+<p><a href="https://www.pyimagesearch.com/books-and-courses/" target="_blank" rel="noopener">Click here to browse my full catalog.</a></p>
+</div></div></main><aside class="sidebar sidebar-primary widget-area" role="complementary" aria-label="Primary Sidebar" id="genesis-sidebar-primary"><h2 class="genesis-sidebar-title screen-reader-text">Primary Sidebar</h2><section id="custom_html-2" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><div class="textwidget custom-html-widget"><div class="sidebar__block">
+	<a href="https://app.monstercampaigns.com/c/mdoijtrmex7bpm0rp2hn/"><img src="https://www.pyimagesearch.com/wp-content/uploads/2020/01/free-crashcourse-200x300-1.jpg" alt="" class="wp-image-11900" width="125" height="188" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/01/free-crashcourse-200x300-1.jpg 500w, https://www.pyimagesearch.com/wp-content/uploads/2020/01/free-crashcourse-200x300-1.jpg 200w" sizes="(max-width: 125px) 100vw, 125px"></a>	
+	<h4 class="sidebar__block-title"><a href="https://app.monstercampaigns.com/c/mdoijtrmex7bpm0rp2hn/">Free Resource Guide: Computer Vision, OpenCV, and Deep Learning</a></h4>
+	<div class="sidebar__block-content">
+		<p>Inside you'll find my hand-picked tutorials, books, courses, and libraries to help you master CV and DL.</p>	
+	</div>
+	<a href="https://app.monstercampaigns.com/c/mdoijtrmex7bpm0rp2hn/" class="button sidebar__block-button">Download</a>
+</div></div></div></section>
+<section id="custom_html-3" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><div class="textwidget custom-html-widget"><div class="sidebar__block">
+	<a target="_blank" href="https://www.pyimagesearch.com/raspberry-pi-for-computer-vision/" rel="noopener"><img src="https://www.pyimagesearch.com/wp-content/uploads/2020/01/raspberry-pi-for-computer-vision-200x300-1.jpg" alt="" class="wp-image-11905" width="125" height="188" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/01/raspberry-pi-for-computer-vision-200x300-1.jpg 500w, https://www.pyimagesearch.com/wp-content/uploads/2020/01/raspberry-pi-for-computer-vision-200x300-1.jpg 200w" sizes="(max-width: 125px) 100vw, 125px"></a>	
+	<h4 class="sidebar__block-title"><a target="_blank" href="https://www.pyimagesearch.com/raspberry-pi-for-computer-vision/" rel="noopener">Raspberry Pi for Computer Vision</a></h4>
+	<div class="sidebar__block-content">
+		<p>You can teach your Raspberry Pi to “see” using Computer Vision, Deep Learning, and OpenCV. Let me show you how.</p>	
+	</div>
+	<a target="_blank" href="https://www.pyimagesearch.com/raspberry-pi-for-computer-vision/" class="sidebar__block-link" rel="noopener">Learn More</a>
+</div></div></div></section>
+<section id="custom_html-4" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><div class="textwidget custom-html-widget"><div class="sidebar__block">
+	<a target="_blank" href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" rel="noopener"><img src="https://www.pyimagesearch.com/wp-content/uploads/2020/01/deep-learning-for-computer-vision-200x300-1.jpg" alt="" class="wp-image-11907" width="125" height="188" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/01/deep-learning-for-computer-vision-200x300-1.jpg 500w, https://www.pyimagesearch.com/wp-content/uploads/2020/01/deep-learning-for-computer-vision-200x300-1.jpg 200w" sizes="(max-width: 125px) 100vw, 125px"></a>	
+	<h4 class="sidebar__block-title"><a target="_blank" href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" rel="noopener">Deep Learning for Computer Vision with Python</a></h4>
+	<div class="sidebar__block-content">
+		<p>You're interested in deep learning and computer vision, but you don't know how to get started. Let me help. My new book will teach you all you need to know about deep learning.</p>	
+	</div>
+	<a target="_blank" href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/" class="sidebar__block-link" rel="noopener">Learn More</a>
+</div></div></div></section>
+<section id="custom_html-5" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><div class="textwidget custom-html-widget"><div class="sidebar__block">
+<h4 class="sidebar__block-title"><a target="_blank" href="https://www.pyimagesearch.com/practical-python-opencv/" rel="noopener">You can detect faces in images & video.</a></h4>	
+<a target="_blank" href="https://www.pyimagesearch.com/practical-python-opencv/" rel="noopener"><img src="https://hcl.pyimagesearch.com/wp-content/uploads/2020/01/detect-faces.jpg" alt="" class="wp-image-11909"></a>	
+<div class="sidebar__block-content">
+<p>Are you interested in detecting faces in images & video? But tired of Googling for tutorials that never work? Then let me help! I guarantee that my new book will turn you into a face detection ninja by the end of this weekend. Click here to give it a shot yourself.</p>
+</div>
+<a target="_blank" href="https://www.pyimagesearch.com/practical-python-opencv/" class="sidebar__block-link" rel="noopener">Learn More</a>
+</div></div></div></section>
+<section id="custom_html-6" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><div class="textwidget custom-html-widget"><div class="sidebar__block">
+<h4 class="sidebar__block-title"><a target="_blank" href="https://www.pyimagesearch.com/pyimagesearch-gurus/" rel="noopener">PyImageSearch Gurus: NOW ENROLLING!</a></h4>	
+<a target="_blank" href="https://www.pyimagesearch.com/pyimagesearch-gurus/" rel="noopener"><img src="https://www.pyimagesearch.com/wp-content/uploads/2020/01/gurus-course-200x300-1.jpg" alt="" class="wp-image-11903" width="125" height="188" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/01/gurus-course-200x300-1.jpg 500w, https://www.pyimagesearch.com/wp-content/uploads/2020/01/gurus-course-200x300-1.jpg 200w" sizes="(max-width: 125px) 100vw, 125px"></a>
+<div class="sidebar__block-content">
+<p>The PyImageSearch Gurus course is now enrolling! Inside the course you'll learn how to perform:</p>
+<p>
+<strong>
+                &middot; Automatic License Plate Recognition (ANPR)<br>&middot; Deep Learning<br>&middot; Face Recognition<br>&middot; <em>...and much more!</em>
+</strong>
+</p>
+<p>
+Click the button below to learn more about the course, take a tour, and get 10 (FREE) sample lessons.
+</p>
+</div>
+<a target="_blank" href="https://www.pyimagesearch.com/pyimagesearch-gurus/" class="sidebar__block-link" rel="noopener">Learn More</a>
+</div></div></div></section>
+</aside></div></div></div><div class="similar-articles"><div class="wrap"><h3>Similar articles</h3><div class="gpd-simple-card-group"><article class="post-summary"><a href="https://www.pyimagesearch.com/2014/02/10/building-an-image-search-engine-indexing-your-dataset-step-2-of-4/" class="post-summary--link"><header class="entry-header"><div class="entry-categories"><div class="entry-category">Image Search Engine Basics</div></div><h2 class="entry-title">Building an Image Search Engine: Indexing Your Dataset (Step 2 of 4)</h2><div class="entry-date">February 10, 2014</div></header><p class="entry-content-link"><svg class="svg-icon long-arrow" width="14" height="14" aria-hidden="true" role="img" focusable="false" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.8125 0.1875C6.875 0.125 6.96875 0.09375 7.09375 0.09375C7.1875 0.09375 7.28125 0.125 7.34375 0.1875L13.875 6.75C13.9375 6.8125 14 6.90625 14 7C14 7.125 13.9375 7.1875 13.875 7.25L7.34375 13.8125C7.28125 13.875 7.1875 13.9062 7.09375 13.9062C6.96875 13.9062 6.875 13.875 6.8125 13.8125L6.1875 13.1875C6.125 13.125 6.09375 13.0625 6.09375 12.9375C6.09375 12.8438 6.125 12.75 6.1875 12.6562L11.0312 7.8125H0.375C0.25 7.8125 0.15625 7.78125 0.09375 7.71875C0.03125 7.65625 0 7.5625 0 7.4375V6.5625C0 6.46875 0.03125 6.375 0.09375 6.3125C0.15625 6.25 0.25 6.1875 0.375 6.1875H11.0312L6.1875 1.34375C6.125 1.28125 6.09375 1.1875 6.09375 1.0625C6.09375 0.96875 6.125 0.875 6.1875 0.8125L6.8125 0.1875Z" fill="#169FE6"/></svg></p></a></article><article class="post-summary"><a href="https://www.pyimagesearch.com/2014/11/24/detecting-barcodes-images-python-opencv/" class="post-summary--link"><header class="entry-header"><div class="entry-categories"><div class="entry-category">Image Processing</div><div class="entry-category">Tutorials</div></div><h2 class="entry-title">Detecting Barcodes in Images with Python and OpenCV</h2><div class="entry-date">November 24, 2014</div></header><p class="entry-content-link"><svg class="svg-icon long-arrow" width="14" height="14" aria-hidden="true" role="img" focusable="false" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.8125 0.1875C6.875 0.125 6.96875 0.09375 7.09375 0.09375C7.1875 0.09375 7.28125 0.125 7.34375 0.1875L13.875 6.75C13.9375 6.8125 14 6.90625 14 7C14 7.125 13.9375 7.1875 13.875 7.25L7.34375 13.8125C7.28125 13.875 7.1875 13.9062 7.09375 13.9062C6.96875 13.9062 6.875 13.875 6.8125 13.8125L6.1875 13.1875C6.125 13.125 6.09375 13.0625 6.09375 12.9375C6.09375 12.8438 6.125 12.75 6.1875 12.6562L11.0312 7.8125H0.375C0.25 7.8125 0.15625 7.78125 0.09375 7.71875C0.03125 7.65625 0 7.5625 0 7.4375V6.5625C0 6.46875 0.03125 6.375 0.09375 6.3125C0.15625 6.25 0.25 6.1875 0.375 6.1875H11.0312L6.1875 1.34375C6.125 1.28125 6.09375 1.1875 6.09375 1.0625C6.09375 0.96875 6.125 0.875 6.1875 0.8125L6.8125 0.1875Z" fill="#169FE6"/></svg></p></a></article><article class="post-summary"><a href="https://www.pyimagesearch.com/2015/02/15/pyimagesearch-gurus-kickstarter-can-still-claim-spot-line/" class="post-summary--link"><header class="entry-header"><div class="entry-categories"><div class="entry-category">Kickstarter</div></div><h2 class="entry-title">The PyImageSearch Kickstarter Gurus is over&#8230;but you can still claim your spot in line.</h2><div class="entry-date">February 15, 2015</div></header><p class="entry-content-link"><svg class="svg-icon long-arrow" width="14" height="14" aria-hidden="true" role="img" focusable="false" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.8125 0.1875C6.875 0.125 6.96875 0.09375 7.09375 0.09375C7.1875 0.09375 7.28125 0.125 7.34375 0.1875L13.875 6.75C13.9375 6.8125 14 6.90625 14 7C14 7.125 13.9375 7.1875 13.875 7.25L7.34375 13.8125C7.28125 13.875 7.1875 13.9062 7.09375 13.9062C6.96875 13.9062 6.875 13.875 6.8125 13.8125L6.1875 13.1875C6.125 13.125 6.09375 13.0625 6.09375 12.9375C6.09375 12.8438 6.125 12.75 6.1875 12.6562L11.0312 7.8125H0.375C0.25 7.8125 0.15625 7.78125 0.09375 7.71875C0.03125 7.65625 0 7.5625 0 7.4375V6.5625C0 6.46875 0.03125 6.375 0.09375 6.3125C0.15625 6.25 0.25 6.1875 0.375 6.1875H11.0312L6.1875 1.34375C6.125 1.28125 6.09375 1.1875 6.09375 1.0625C6.09375 0.96875 6.125 0.875 6.1875 0.8125L6.8125 0.1875Z" fill="#169FE6"/></svg></p></a></article></div></div></div><div class="gpd-footer-cta"><div class="wrap"><div class="footer-cta-grid"><div class="footer-cta-image"><img width="932" height="833" src="https://www.pyimagesearch.com/wp-content/uploads/2020/02/man-on-sofa-with-laptop-1.jpg" class="attachment-full size-full" alt="" loading="lazy" srcset="https://www.pyimagesearch.com/wp-content/uploads/2020/02/man-on-sofa-with-laptop-1.jpg 932w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/man-on-sofa-with-laptop-1-300x268.jpg 300w, https://www.pyimagesearch.com/wp-content/uploads/2020/02/man-on-sofa-with-laptop-1-768x686.jpg 768w" sizes="(max-width: 932px) 100vw, 932px" /></div><div class="footer-cta-title"><h3>You can learn Computer Vision, Deep Learning, and OpenCV.</h3></div><div class="footer-cta-content"><div class="footer-cta-content-desc"><p>Get your FREE 17 page Computer Vision, OpenCV, and Deep Learning Resource Guide PDF. Inside you&#8217;ll find my hand-picked tutorials, books, courses, and libraries to help you master CV and DL.</p>
+</div><div class="footer-cta-content-action"><form class="footer-cta" action="https://www.getdrip.com/forms/657075648/submissions" method="post" target="_blank" data-drip-embedded-form="657075648">
+	<input type="email" name="fields[email]" class="form-control" id="email" value="" placeholder="Your email address"/>
+	<button type="submit" data-drip-attribute="sign-up-button">Download for free</button>
+	<div style="display: none;" aria-hidden="true"><label for="website">Website</label><br /><input type="text" id="website" name="website" tabindex="-1" autocomplete="false" value="" /></div>
+</form></div></div></div></div></div><div class="footer-widgets" id="genesis-footer-widgets"><h2 class="genesis-sidebar-title screen-reader-text">Footer</h2><div class="wrap"><div class="widget-area footer-widgets-1 footer-widget-area"><section id="custom_html-7" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><h3 class="widgettitle widget-title">Topics</h3>
+<div class="textwidget custom-html-widget"><ul>
+	<li><a href="https://www.pyimagesearch.com/category/deep-learning-2/">Deep Learning</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/dlib/">Dlib Library</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/embedded/">Embedded/IoT and Computer Vision</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/faces/">Face Applications</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/image-processing/">Image Processing</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/interviews/">Interviews</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/keras/">Keras</a></li>
+</ul>
+</div></div></section>
+</div><div class="widget-area footer-widgets-2 footer-widget-area"><section id="custom_html-8" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><div class="textwidget custom-html-widget"><ul>
+	<li><a href="https://www.pyimagesearch.com/category/machine-learning-2/">Machine Learning and Computer Vision</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/medical/">Medical Computer Vision</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/optical-character-recognition-ocr/">Optical Character Recognition (OCR)</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/object-detection/">Object Detection</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/object-tracking/">Object Tracking</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/opencv/">OpenCV Tutorials</a></li>
+	<li><a href="https://www.pyimagesearch.com/category/raspberry-pi/">Raspberry Pi</a></li>
+</ul></div></div></section>
+</div><div class="widget-area footer-widgets-3 footer-widget-area"><section id="custom_html-9" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><h3 class="widgettitle widget-title">Books &#038; Courses</h3>
+<div class="textwidget custom-html-widget"><ul>
+<li><a href="https://www.pyimagesearch.com/free-opencv-computer-vision-deep-learning-crash-course/">FREE CV, DL, and OpenCV Crash Course</a></li>
+<li><a href="https://www.pyimagesearch.com/practical-python-opencv/">Practical Python and OpenCV</a></li>
+<li><a href="https://www.pyimagesearch.com/deep-learning-computer-vision-python-book/">Deep Learning for Computer Vision with Python</a></li>
+<li><a href="https://www.pyimagesearch.com/pyimagesearch-gurus/">PyImageSearch Gurus Course</a></li>
+<li><a href="https://www.pyimagesearch.com/raspberry-pi-for-computer-vision/">Raspberry Pi for Computer Vision</a></li>
+</ul></div></div></section>
+</div><div class="widget-area footer-widgets-4 footer-widget-area"><section id="custom_html-10" class="widget_text widget widget_custom_html"><div class="widget_text widget-wrap"><h3 class="widgettitle widget-title">PyImageSearch</h3>
+<div class="textwidget custom-html-widget"><ul>
+	<li><a href="https://www.pyimagesearch.com/start-here/">Get Started</a></li>
+	<li><a href="https://www.pyimagesearch.com/opencv-tutorials-resources-guides/">OpenCV Install Guides</a></li>
+	<li><a href="https://www.pyimagesearch.com/about/">About</a></li>
+	<li><a href="https://www.pyimagesearch.com/faqs/">FAQ</a></li>
+	<li><a href="https://www.pyimagesearch.com/topics/">Blog</a></li>
+	<li><a href="https://www.pyimagesearch.com/contact/">Contact</a></li>
+	<li><a href="https://www.pyimagesearch.com/privacy-policy/">Privacy Policy</a></li>
+</ul></div></div></section>
+</div></div></div><footer class="site-footer"><div class="wrap"><div class="footer-logo"><p class="site-title"><a href="https://www.pyimagesearch.com"></a></p></div><div class="footer-social"><a target="_blank" href="https://www.facebook.com/pyimagesearch"><svg class="svg-icon social-icon" width="18" height="18" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 512"><path d="M215.8 85H264V3.6C255.7 2.5 227.1 0 193.8 0 124.3 0 76.7 42.4 76.7 120.3V192H0v91h76.7v229h94V283h73.6l11.7-91h-85.3v-62.7c0-26.3 7.3-44.3 45.1-44.3z"/></svg></a><a target="_blank" href="https://twitter.com/PyImageSearch"><svg class="svg-icon social-icon" width="18" height="18" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg></a><a target="_blank" href="http://www.linkedin.com/pub/adrian-rosebrock/2a/873/59b"><svg class="svg-icon social-icon" width="18" height="18" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg></a><a target="_blank" href="https://www.youtube.com/channel/UCoQK7OVcIVy-nV4m-SMCk_Q/videos"><svg class="svg-icon social-icon" width="18" height="18" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg></a></div><div class="footer-info">&copy; 2021 <a href="https://www.pyimagesearch.com">PyImageSearch</a>. All Rights Reserved.</div></div></footer></div>
+		<div id="pyi-pyimagesearch-plus-optin-modal" class="front-page-modal modal">
+			<div style="text-align: center; font-size: 18px; padding-bottom: 20px;">
+				<a target="_blank" href="https://pyimagesearch.mykajabi.com/login" style="font-weight: normal; color: #808080;">Already a member of PyImageSearch University? <strong>Click here to login.</strong></a>
+			</div>
+
+			<center><img class="pyuni-logo" src="https://www.pyimagesearch.com/wp-content/uploads/2021/02/pyimagesearch_university_logo.png" alt="PyImageSearch University Logo"/></center>
+
+			<div class="front-modal-top">
+				<h3>Access the code to this tutorial and all other 400+ tutorials on PyImageSearch</h3>
+			</div>
+
+			<div class="front-modal-video first">
+				<div class="front-modal-video-embed">
+					<script src="https://fast.wistia.com/embed/medias/8ggk996ods.jsonp" async></script><script src="https://fast.wistia.com/assets/external/E-v1.js" async></script><div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><div class="wistia_embed wistia_async_8ggk996ods videoFoam=true" style="height:100%;position:relative;width:100%"><div class="wistia_swatch" style="height:100%;left:0;opacity:0;overflow:hidden;position:absolute;top:0;transition:opacity 200ms;width:100%;"><img src="https://fast.wistia.com/embed/medias/8ggk996ods/swatch" style="filter:blur(5px);height:100%;object-fit:contain;width:100%;" alt="" aria-hidden="true" onload="this.parentNode.style.opacity=1;" /></div></div></div></div>
+				</div>
+	 			<div class="front-modal-action" style="margin-top: 20px;">
+					<p><strong>Enter your email address below to learn more about PyImageSearch University</strong> (including how you can download the source code to this post):</p>
+					<form class="footer-cta" action="https://www.getdrip.com/forms/857913265/submissions" method="post" target="_blank" data-drip-embedded-form="857913265" id="drip-ef-857913265">
+						<input type="email" name="fields[email]" class="form-control" id="email" value="" placeholder="Your email address"/>
+						<input id="code_submit_post_title" type="hidden" name="fields[code_submit_post_title]" value="" />
+						<button type="submit" data-drip-attribute="sign-up-button">Learn More</button>
+						<div style="display: none;" aria-hidden="true"><label for="website">Website</label><br /><input type="text" id="website" name="website" tabindex="-1" autocomplete="false" value="" /></div>
+					</form>
+				</div>
+			</div>
+
+			<div class="front-modal-top">
+				<h3>What's included in PyImageSearch University?</h3>
+			</div>
+
+			<div class="front-modal-video">
+				<div class="front-modal-video-desc">
+					<ul class="is-style-list-checks">
+						<li><strong>Easy access to the code, datasets, and pre-trained models</strong> for all 400+ tutorials on the PyImageSearch blog</li>
+						<li><strong>High-quality, well documented source code</strong> with line-by-line explanations (ensuring you know exactly what the code is doing)</li>
+						<li><strong>Jupyter Notebooks</strong> that are pre-configured to run in <strong>Google Colab</strong> with a <em>single click</em></li>
+						<li><strong>Run all code examples in your web browser</strong> — no dev environment configuration required!</li>
+					</ul>
+				</div>
+				<div class="front-modal-video-desc">
+					<ul class="is-style-list-checks">
+						<li><strong>Support for all major operating systems</strong> (Windows, macOS, Linux, and Raspbian)</li>
+						<li><strong>Full access to PyImageSearch University courses</strong></li>
+						<li><strong>Detailed video tutorials</strong> for every lesson</li>
+						<li><strong>Certificates of Completion</strong> for all courses</li>
+						<li><strong>New courses added <em>every month!</em></strong> &mdash; stay on top of state-of-the-art trends in computer vision and deep learning</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="front-modal-testimonial">
+				<blockquote><p>PyImageSearch University is really the best Computer Visions "Masters" Degree that I wish I had when starting out. <strong>Being able to access all of Adrian's tutorials in a single indexed page and being able to start playing around with the code without going through the nightmare of setting up everything is just amazing.</strong> 10/10 would recommend.</p><cite><span class="quote-name">Sanyam Bhutani</span><span class="cite-title">Machine Learning Engineer and 2x Kaggle Master</span></cite></blockquote>
+			</div>
+		</div>
+
+		<div id="pyi-pyimagesearch-plus-pricing-modal" class="front-page-modal modal">
+			<div class="pyuni-login-link">
+				<a target="_blank" href="https://pyimagesearch.mykajabi.com/login">Already a member of PyImageSearch University? <strong>Click here to login.</strong></a>
+			</div>
+
+			<center><img id="pyuni-reco-header" class="pyuni-logo" src="https://www.pyimagesearch.com/wp-content/uploads/2021/02/pyimagesearch_university_logo.png" alt="PyImageSearch University Logo"/></center>
+
+			<div id="pyuni-pricing-page">
+				<div class="front-modal-top">
+										<h3>Get <em>instant accesss</em> to my source code repos, Jupyter Notebooks, video tutorials, and online courses.</h3>
+									</div>
+
+				<div class="pricing-area">
+					<div class="left-area">
+						<div class="pricing-info">
+							<p>How would you like to pay?</p>
+
+							<div id="pricing_options">
+								<div>
+									<input id="pricing_monthly" type="radio" name="plan_pricing" value="monthly" checked="checked">
+									<label for="pricing_monthly"><strong>Monthly:</strong>  $19 each month</label>
+								</div>
+
+								<div>
+									<input id="pricing_yearly" type="radio" name="plan_pricing" value="yearly">
+									<label for="pricing_yearly"><strong>Yearly:</strong>  $190 once a year</label>
+								</div>
+
+								<div>
+									<input id="pricing_lifetime" type="radio" name="plan_pricing" value="lifetime">
+									<label for="pricing_lifetime"><strong>Lifetime:</strong> One-time payment of  $395</label>
+								</div>
+							</div>
+
+							<div class="pyuni-checkout-link">
+								<a class="button link" target="_blank" href="https://pyimagesearch.mykajabi.com/offers/825co8SB/checkout">Join Now</a>
+							</div>
+						</div>
+						<ul class="is-style-list-checks">
+							<li>Access to <strong>centralized code repos for <em>all</em> 400+ tutorials</strong> on PyImageSearch</li>
+							<li><strong> Easy one-click downloads</strong> for code, datasets, pre-trained models, etc.</li>
+							<li><strong> Full access to PyImageSearch University</strong></li>
+							<li><strong>19h 26m</strong> on-demand video</li>
+							<li><strong>12 courses</strong> on essential computer vision, deep learning, and OpenCV topics</li>
+							<li>12 Certificates of Completion</li>
+							<li><strong>Brand new courses released <em>every month</em></strong>, ensuring you can keep up with state-of-the-art techniques</li>
+							<li>304 tutorials and downloadable resources</li>
+							<li><strong>Pre-configured Jupyter Notebooks in Google Colab</strong> for 200+ PyImageSearch tutorials</li>
+							<li><strong>Run all code examples in your web browser</strong> — works on Windows, macOS, and Linux (no dev environment configuration required!)</li>
+							<li class="last">Access on mobile, laptop, desktop, etc.</li>
+						</ul>
+
+						<div class="pyuni-checkout-link">
+							<a class="button link" target="_blank" href="https://pyimagesearch.mykajabi.com/offers/825co8SB/checkout">Join Now</a>
+						</div>
+					</div>
+
+					<div class="right-area">
+						<div class="video-area">
+							<script src="https://fast.wistia.com/embed/medias/kno0cmko2z.jsonp" async></script><script src="https://fast.wistia.com/assets/external/E-v1.js" async></script><div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><div class="wistia_embed wistia_async_kno0cmko2z videoFoam=true" style="height:100%;position:relative;width:100%"><div class="wistia_swatch" style="height:100%;left:0;opacity:0;overflow:hidden;position:absolute;top:0;transition:opacity 200ms;width:100%;"><img src="https://fast.wistia.com/embed/medias/kno0cmko2z/swatch" style="filter:blur(5px);height:100%;object-fit:contain;width:100%;" alt="" aria-hidden="true" onload="this.parentNode.style.opacity=1;" /></div></div></div></div>
+						</div>
+
+						<img class="checkout-secure" src="https://www.pyimagesearch.com/wp-content/uploads/2021/03/secure_checkout.png" />
+
+						<div class="testimonials-area">
+							<blockquote><p><strong>PyImageSearch University is really the best Computer Visions "Masters" Degree that I wish I had when starting out.</strong> Being able to access all of Adrian's tutorials in a single indexed page and being able to start playing around with the code without going through the nightmare of setting up everything is just amazing. <strong>10/10 would recommend.</strong></p><cite><span class="quote-name">Sanyam Bhutani</span><span class="cite-title">Machine Learning Engineer and 2x Kaggle Master</span></cite></blockquote>
+						</div>
+					</div>
+				</div>
+
+				<div class="clear-both"></div>
+
+				<div class="front-modal-top">
+					<h3>Why join PyImageSearch University?</h3>
+
+					<p><strong>Simple — you are looking for a <em>structured program</em> to help you learn computer vision, deep learning, and OpenCV.</strong></p>
+				</div>
+
+				<div class="front-modal-video-desc why-join-uni">
+					<p>You’ve likely already spent a lot of time reading free materials online, piecing together code snippets, and just generally stumbling your way through, trying to “connect the dots” without having any idea of what the big picture is (or how you’re going to get there).</p>
+
+					<p>Truth be told, that’s how I learned computer vision back in graduate school. There weren’t blogs and resources like PyImageSearch online back then. I was blindly stumbling my way through. I eventually found my way...<em>but I wouldn’t recommend the path I took for you.</em></p>
+
+					<p><strong>There is a better way — and that way is PyImageSearch University.</strong> Inside PyImageSearch University you get step-by-step instructions that take you from computer vision and deep learning <em>beginner</em> to <em>master.</em></p>
+
+					<p>And best of all, I keep PyImageSearch University updated with brand new tutorials, courses, code downloads, Jupyter Notebooks, and video tutorials on a <em>weekly basis.</em> There is no other program like this online.</p>
+
+					<p>I hope to see you inside.</p>
+
+					<div class="pyuni-join-btn-container">
+						<a class="button link" href="#pyuni-reco-header">Click here to join PyImageSearch University</a>
+					</div>
+				</div>
+
+				<div class="front-modal-top">
+					<h3>What courses are included in PyImageSearch University?</h3>
+
+					<p>There are 12 courses inside PyImageSearch University. Additionally, a brand new course is released <em>every month.</em></p>
+				</div>
+
+				<div class="front-modal-video">
+					<div class="front-modal-video-desc">
+						<ul class="is-style-list-checks">
+							<li><strong>OpenCV 101</strong> — OpenCV Basics</li>
+							<li><strong>OpenCV 104</strong> — Histograms</li>
+							<li><strong>Face Applications 102</strong> — Face Detection</li>
+							<li><strong>Face Applications 102</strong> — Fundamentals of Facial Landmarks</li>
+							<li><strong>Augmented Reality 101</strong> — Fiducials and Markers</li>
+							<li><strong>Deep Learning 120</strong> — Regression with CNNs</li>
+							<li><strong>Deep Learning 130</strong> — Hyperparameter Tuning</li>
+						</ul>
+					</div>
+					<div class="front-modal-video-desc">
+						<ul class="is-style-list-checks">
+							<li><strong>Siamese Networks 101</strong> — Intro to Siamese Networks</li>
+							<li><strong>Image Adversaries 101</strong> — Intro to Image Adversaries</li>
+							<li><strong>Object Detection 101</strong> — Easy Object Detection</li>
+							<li><strong>Object Detection 201</strong> — Fundamentals of Deep Learning Object Detection</li>
+							<li><strong>Object Detection 202</strong> — Bounding Box Regression</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="front-modal-video">
+					<div class="front-modal-video-desc">
+						<div class="front-modal-top">
+							<h3>Why not host all your code, datasets, pre-trained models, etc. on GitHub?</h3>
+						</div>
+						<div class="front-modal-video-desc">
+							<p>If you didn’t already know, <strong>GitHub places limits and restrictions on file sizes</strong> — if you have a file larger than 100MB, GitHub won’t let you add it to your repository.</p>
+
+							<p>That creates a bit of a problem because we often train models on custom image datasets that are larger than 100MB. Similarly, output serialized models can <em>easily</em> be 100MB or more.</p>
+
+							<p>After 7+ years running PyImageSearch, I’ve found that for any given tutorial I’ve authored, readers simply want all the source code, pre-trained models, datasets, etc. <stong><em>in a single .zip file,</em></stong> that way they can <strong>download the code, unarchive it, and run the code immediately.</strong></p>
+
+							<p>What you <em>don’t</em> want is to have to clone a repo from GitHub and then spend the next 20 minutes Googling for the original dataset used to train the model, the pre-trained model itself, etc. Not only is that hunting and scrounging tedious, <em>but it’s also a waste of your time.</em></p>
+
+							<p>My goal is to help you master computer vision and deep learning &mdash; and to that end, I keep all my <strong>code, datasets, etc. inside a <em>central mastery repository</em> inside PyImageSearch University.</strong>  Once you  join you will have instant access to the master repo.</p>
+						</div>
+					</div>
+					<div class="front-modal-video-desc">
+						<div class="front-modal-top">
+							<h3>Why not make PyImageSearch University free?</h3>
+						</div>
+						<div class="front-modal-video-desc">
+							<p>High-quality tutorials and accompanying code examples don’t grow on trees — someone has to create them.</p>
+
+							<p>Let me share some quick statistics with you:</p>
+
+							<ul class="is-style-list-checks">
+								<li>It takes ~40-60 man hours to create each tutorial on PyImageSearch</li>
+								<li>That's about $3500-4500 USD for each post</li>
+								<li>I’ve published over 400 tutorials published on PyImageSearch (with <em>brand new</em> tutorials publishing every Monday at 10AM EST)</li>
+								<li><strong>Which means that I'm already offering $1,400,000+ worth of content for free</strong></li>
+							</ul>
+
+							<p>I’ve considered putting all of my 400+ tutorials behind a pay-wall (ex., Medium, New York Times, etc.), but that wouldn’t be fair to any of us.</p>
+
+							<p><strong>Instead, PyImageSearch University is a way for you to get a world-class education from me, an actual PhD in computer vision and deep learning — all for a price that's fair to the both of us.</strong></p>
+						</div>
+					</div>
+				</div>
+
+				<div class="front-modal-top">
+					<h3>How can I join PyImageSearch University?</h3>
+				</div>
+
+				<div class="front-modal-video-desc how-to-join">
+					<p>Easy! Just click the button below, select your membership, and register.</p>
+
+					<div class="pyuni-join-btn-container">
+						<a class="button link" href="#pyuni-reco-header">Click here to join PyImageSearch University</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="pyuni-login-link">
+				<a target="_blank" href="https://pyimagesearch.mykajabi.com/login">Already a member of PyImageSearch University? <strong>Click here to login.</strong></a>
+			</div>
+
+		</div>
+
+<!-- RightMessage WP -->
+<script type="text/javascript"> 
+(function(p, a, n, d, o, b) {
+    o = n.createElement('script'); o.type = 'text/javascript'; o.async = true; o.src = 'https://tw.rightmessage.com/'+p+'.js';
+    b = n.getElementsByTagName('script')[0]; b.parentNode.insertBefore(o, b);
+    d = function(h, u, i) { var o = n.createElement('style'); o.id = 'rmcloak'+i; o.type = 'text/css';
+        o.appendChild(n.createTextNode('.rmcloak'+h+'{visibility:hidden}.rmcloak'+u+'{display:none}'));
+        b.parentNode.insertBefore(o, b); return o; }; o = d('', '-hidden', ''); d('-stay-invisible', '-stay-hidden', '-stay');
+    setTimeout(function() { o.parentNode && o.parentNode.removeChild(o); }, a);
+})('1871593262', 20000, document);
+</script>
+<!-- Drip -->
+<script type="text/javascript">
+  var _dcq = _dcq || [];
+  var _dcs = _dcs || {}; 
+  _dcs.account = '4768429';
+  
+  (function() {
+    var dc = document.createElement('script');
+    dc.type = 'text/javascript'; dc.async = true; 
+    dc.src = '//tag.getdrip.com/4768429.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(dc, s);
+  })();
+</script>
+
+<!-- facebook -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '1465896023527386');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=1465896023527386&ev=PageView&noscript=1"
+/></noscript>
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//web.archive.org/web/20170924062416/https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46641058-1', 'pyimagesearch.com');
+  ga('send', 'pageview');
+</script>
+
+<! -- Clicky -->
+<script src="//static.getclicky.com/js" type="text/javascript"></script>
+<script type="text/javascript">try{ clicky.init(101083980); }catch(e){}</script><!-- This site is converting visitors into subscribers and customers with OptinMonster - https://optinmonster.com :: Campaign Title: PyImageConf Early Bird Inline --><div id="om-ecjnldox9dphdwckleif-holder"></div><script>var ecjnldox9dphdwckleif,ecjnldox9dphdwckleif_poll=function(){var r=0;return function(n,l){clearInterval(r),r=setInterval(n,l)}}();!function(e,t,n){if(e.getElementById(n)){ecjnldox9dphdwckleif_poll(function(){if(window['om_loaded']){if(!ecjnldox9dphdwckleif){ecjnldox9dphdwckleif=new OptinMonsterApp();return ecjnldox9dphdwckleif.init({"u":"18464.730567","staging":0,"dev":0,"beta":0});}}},25);return;}var d=false,o=e.createElement(t);o.id=n,o.src="https://a.omappapi.com/app/js/api.min.js",o.async=true,o.onload=o.onreadystatechange=function(){if(!d){if(!this.readyState||this.readyState==="loaded"||this.readyState==="complete"){try{d=om_loaded=true;ecjnldox9dphdwckleif=new OptinMonsterApp();ecjnldox9dphdwckleif.init({"u":"18464.730567","staging":0,"dev":0,"beta":0});o.onload=o.onreadystatechange=null;}catch(t){}}}};(document.getElementsByTagName("head")[0]||document.documentElement).appendChild(o)}(document,"script","omapi-script");</script><!-- / OptinMonster --><!-- This site is converting visitors into subscribers and customers with OptinMonster - https://optinmonster.com :: Campaign Title: CS: Template --><script>(function(d){var s=d.createElement('script');s.type='text/javascript';s.src='https://a.omappapi.com/app/js/api.min.js';s.async=true;s.dataset.campaign='tortsem7qkvyuxc4cyfi';s.dataset.user='18464';d.getElementsByTagName('head')[0].appendChild(s);})(document);</script><!-- / OptinMonster --><!-- This site is converting visitors into subscribers and customers with OptinMonster - https://optinmonster.com :: Campaign Title: CVDL Resource Guide --><script>(function(d){var s=d.createElement('script');s.type='text/javascript';s.src='https://a.omappapi.com/app/js/api.min.js';s.async=true;s.dataset.campaign='mdoijtrmex7bpm0rp2hn';s.dataset.user='18464';d.getElementsByTagName('head')[0].appendChild(s);})(document);</script><!-- / OptinMonster --><div style="position:absolute;overflow:hidden;clip:rect(0 0 0 0);height:1px;width:1px;margin:-1px;padding:0;border:0"><div class="omapi-shortcode-helper">[email]</div><div class="omapi-shortcode-parsed omapi-encoded">[email]</div></div>		<script type="text/javascript">
+		var ecjnldox9dphdwckleif_shortcode = true;var tortsem7qkvyuxc4cyfi_shortcode = true;var mdoijtrmex7bpm0rp2hn_shortcode = true;		</script>
+		
+
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/c1e05.js"></script>
+
+<script type='text/javascript' id='lodash-js-after'>
+window.lodash = _.noConflict();
+</script>
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/23007.js"></script>
+
+<script type='text/javascript' id='wp-api-fetch-js-translations'>
+( function( domain, translations ) {
+	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
+	localeData[""].domain = domain;
+	wp.i18n.setLocaleData( localeData, domain );
+} )( "default", { "locale_data": { "messages": { "": {} } } } );
+</script>
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/f565c.js"></script>
+
+<script type='text/javascript' id='wp-api-fetch-js-after'>
+wp.apiFetch.use( wp.apiFetch.createRootURLMiddleware( "https://www.pyimagesearch.com/wp-json/" ) );
+wp.apiFetch.nonceMiddleware = wp.apiFetch.createNonceMiddleware( "505933406b" );
+wp.apiFetch.use( wp.apiFetch.nonceMiddleware );
+wp.apiFetch.use( wp.apiFetch.mediaUploadMiddleware );
+wp.apiFetch.nonceEndpoint = "https://www.pyimagesearch.com/wp-admin/admin-ajax.php?action=rest-nonce";
+</script>
+<script type='text/javascript' id='contact-form-7-js-extra'>
+/* <![CDATA[ */
+var wpcf7 = {"cached":"1"};
+/* ]]> */
+</script>
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/6108d.js"></script>
+
+<script type='text/javascript' id='pyis-optinmonster-gpd-js-extra'>
+/* <![CDATA[ */
+var pyISOptinMonster = {"post_title":"Autoencoders with Keras, TensorFlow, and Deep Learning","campaign_id":"tortsem7qkvyuxc4cyfi","form_image":"https:\/\/s3-us-west-2.amazonaws.com\/static.pyimagesearch.com\/optins\/cs_keras_autoencoders.png","drip_form_submission_url":" https:\/\/www.getdrip.com\/forms\/946939703\/submissions","drip_id":"946939703"};
+/* ]]> */
+</script>
+
+
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/f84a2.js"></script>
+
+<script>(function(d){var s=d.createElement("script");s.type="text/javascript";s.src="https://a.omappapi.com/app/js/api.min.js";s.async=true;s.id="omapi-script";d.getElementsByTagName("head")[0].appendChild(s);})(document);</script>
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/de4f3.js"></script>
+
+<script type='text/javascript' src='https://www.google.com/recaptcha/api.js?render=6LcSHsQUAAAAAIzvikURE5e1jZ-YAGgyhpZnfS6o&#038;ver=3.0' id='google-recaptcha-js'></script>
+<script type='text/javascript' id='wpcf7-recaptcha-js-extra'>
+/* <![CDATA[ */
+var wpcf7_recaptcha = {"sitekey":"6LcSHsQUAAAAAIzvikURE5e1jZ-YAGgyhpZnfS6o","actions":{"homepage":"homepage","contactform":"contactform"}};
+/* ]]> */
+</script>
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/5dce8.js"></script>
+
+<script type='text/javascript' id='enlighterjs-js-after'>
+!function(e,n){if("undefined"!=typeof EnlighterJS){var o={"selectors":{"block":"pre.EnlighterJSRAW","inline":"code.EnlighterJSRAW"},"options":{"indent":-1,"ampersandCleanup":true,"linehover":false,"rawcodeDbclick":false,"textOverflow":"break","linenumbers":true,"theme":"pyis-enlighter-theme","language":"generic","retainCssClasses":false,"collapse":false,"toolbarOuter":"","toolbarTop":"{BTN_RAW}{BTN_COPY}{BTN_WINDOW}{BTN_WEBSITE}","toolbarBottom":""}};(e.EnlighterJSINIT=function(){EnlighterJS.init(o.selectors.block,o.selectors.inline,o.options)})()}else{(n&&(n.error||n.log)||function(){})("Error: EnlighterJS resources not loaded yet!")}}(window,console);
+</script>
+
+<script src="https://www.pyimagesearch.com/wp-content/cache/minify/69a5c.js"></script>
+
+		<script type="text/javascript">var omapi_localized = { ajax: 'https://www.pyimagesearch.com/wp-admin/admin-ajax.php?optin-monster-ajax-route=1', nonce: '4c217b78af', slugs: {"ecjnldox9dphdwckleif":{"slug":"ecjnldox9dphdwckleif","mailpoet":false},"tortsem7qkvyuxc4cyfi":{"slug":"tortsem7qkvyuxc4cyfi","mailpoet":false},"mdoijtrmex7bpm0rp2hn":{"slug":"mdoijtrmex7bpm0rp2hn","mailpoet":false}} };</script>
+				<script type="text/javascript">var omapi_data = {"wc_cart":[],"object_id":12691,"object_key":"post","object_type":"post","term_ids":[165,445,27,571,112,109,359,111]};</script>
+		</body></html>
+
+<!--
+Performance optimized by W3 Total Cache. Learn more: https://www.boldgrid.com/w3-total-cache/
+
+Object Caching 208/299 objects using disk
+Page Caching using disk: enhanced 
+Minified using disk
+Database Caching 7/40 queries in 0.057 seconds using disk
+
+Served from: www.pyimagesearch.com @ 2021-04-06 05:37:54 by W3 Total Cache
+-->
